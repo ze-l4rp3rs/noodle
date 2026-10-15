@@ -14,6 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 QUERIES = ROOT / "src" / "noodle" / "queries.py"
 ALLOWLISTED_FUNCTIONS = {"q12_freshness", "ensure_schema"}
+# Q13 hidden twins deliberately invert the predicate (``clearance > $clr``) and
+# return only counts and access owners, so they are allow-listed by name.
+ALLOWLISTED_PREFIXES = ("hidden_",)
 PREDICATE = "clearance <= $clr"
 
 
@@ -39,6 +42,8 @@ def main() -> int:
             if not has_query:
                 return
             if node.name in ALLOWLISTED_FUNCTIONS:
+                return
+            if node.name.startswith(ALLOWLISTED_PREFIXES):
                 return
             joined = "\n".join(texts)
             if PREDICATE not in joined:

@@ -161,3 +161,52 @@ a richer hand-authored dataset from breaking bring-up while still surfacing the
 omission.
 
 
+## Step 4 — query library and RBAC
+
+### D4.1 Every query returns a `QueryResult`; the hidden twin is folded in
+
+Each public query returns a `QueryResult` carrying the rows, the exact Cypher,
+the redacted params, the node and edge ids touched, and a `HiddenInfo`. The Q13
+hidden twin runs alongside the query (not as a separate tool call) so the API
+layer can always attach the soft dead-end notice without a second round trip.
+`HiddenInfo` carries only a count and the access-owner ids, never a title, name,
+text or id of a hidden node.
+
+### D4.2 The hidden twins are allow-listed by name in `check_clearance.py`
+
+Q13 twins deliberately invert the predicate (`clearance > $clr`) to find what
+was filtered out, so they cannot contain `clearance <= $clr`. The static check
+allow-lists function names starting with `hidden_`; the twins return only counts
+and owners, so this is safe. Every other query still carries the predicate.
+
+### D4.3 Q9 uses a visible-only bounded expansion, not `allShortestPaths`
+
+FalkorDB's `allShortestPaths` needs an already-bound pair and, filtered to the
+visible subgraph, can miss a real visible path when a hidden node sits on a
+shorter route. Q9 instead matches a bounded undirected path and keeps only paths
+whose every node is visible (`ALL(x IN nodes(p) WHERE x.clearance <= $clr)`),
+ordered shortest-first. This proves A2 does not over-hide: iris-lund and ken-zhao
+are visibly connected (5 paths at clearance 1), while wes-novak and freeze-hiring
+have no visible path (the only route is through the restricted victor-hale).
+
+### D4.4 A hidden anchor is still reported by the entity/team twins
+
+`hidden_twin_entity` and `hidden_twin_team` count the anchor itself when it is
+hidden, so asking (at clearance 0) about a clearance-1 entity raises the soft
+dead-end instead of looking like "not found". When the anchor is visible the
+twins count its hidden neighbours. Anchors with no `access_owner_id` (clearance
+below 2) report a count with an empty owner list.
+
+### D4.5 Q1 searches by keyword until the embedding provider lands
+
+No embedder exists until step 6, so Q1's default path is a fulltext keyword
+search with the same RBAC filter and over-fetch (5x limit, A3). A vector path is
+implemented and selected when an `embedding` is supplied; it is exercised once
+the provider exists. The hidden twin always uses fulltext, matching the default.
+
+### D4.6 `queries.md` is generated from `queries.py`
+
+Spec 03 makes the query file the source of truth and `queries.md` a required
+artifact (check.sh item 9). `render_markdown()` walks `QUERY_DOCS` and embeds
+each function's source; `scripts/gen_queries_md.py` writes the file, and a unit
+test fails if the committed file is stale.
