@@ -121,3 +121,43 @@ Every trap in `REQUIRED_TRAP_IDS` also lists the dataset ids it depends on;
 while the id still appears in the list. The "nonexistent-figure" trap has no
 entities by design (its point is that no record states the figure).
 
+## Step 3 — ingestion
+
+### D3.1 `meta:sync.last_synced_at` comes from the dataset, not the wall clock
+
+Spec 04 writes the sync time "on success", which would make the graph's
+freshness depend on when a test happened to run. Spec 07 fixes the demo value
+(`07-api-and-config.md` line 39), and the dataset carries the matching
+`metadata.last_synced_at` (`2026-10-15T00:05:00Z`). Ingestion writes the
+dataset's time so stored freshness is deterministic; the wall clock is only a
+fallback when a dataset omits the field.
+
+### D3.2 A no-change run writes nothing and does not advance the sync
+
+"Ingest is incremental" (04): a second run over an unchanged dataset reports
+every record unchanged and issues no writes. The sync node is only rewritten
+when something changed, or when the operator asks for it explicitly
+(`--touch`), so `last_synced_at` tracks real content, not run count.
+
+### D3.3 Embeddings are deferred to the provider step
+
+The schema has `Document.embedding` / `Chunk.embedding` and a vector index, but
+no embedding provider exists until step 6. Ingestion writes Documents and their
+text without embeddings; Chunks and vectors are filled in when the provider
+lands. The vector index is created empty at `ensure_schema()`.
+
+### D3.4 Ingestion writes through the `IngestWriter`; reads go through `GraphClient`
+
+The single write path (`WRITE_MODULES_ALLOWED` includes `noodle.ingestion`) is
+honoured: ingestion issues every write via `IngestWriter`, and reads its current
+state via the read-side `GraphClient`. This keeps the write-path isolation scan
+in `tests/test_graph.py` green.
+
+### D3.5 Unknown relationship lists are noted, not fatal
+
+A dataset `relationships` key that is not a relationship type in `schema.py`
+produces a plan note and is skipped, rather than aborting ingestion. This keeps
+a richer hand-authored dataset from breaking bring-up while still surfacing the
+omission.
+
+

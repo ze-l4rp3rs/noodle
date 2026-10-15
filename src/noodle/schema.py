@@ -323,7 +323,7 @@ REFERENCE_FIELDS: tuple[RefField, ...] = (
     RefField(
         "chat_messages", "author", "people", relationship="POSTED", reverse=True
     ),
-    RefField("history", "made_by", "people", relationship="MADE_CHANGE"),
+    RefField("history", "made_by", "people", relationship="MADE_CHANGE", reverse=True),
 )
 
 REFERENCE_FIELD_INDEX: dict[tuple[str, str], RefField] = {

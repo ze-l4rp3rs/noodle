@@ -512,7 +512,7 @@ def build_chat_messages():
             "channel": "#platform-leads",
             "author_name": "Priya Nair",
             "ts": "2026-09-12T09:00:00Z",
-            "text": "Auth migration target moves to 2026-10-01, superseding the 2026-08-15 date.",
+            "text": "Auth migration target moves to 2026-10-01, superseding the 2026-08-15 date. Ping Noah Fenn for the cutover plan.",
             "thread": None,
             "reactions": [],
             "author": "person:priya-nair",
@@ -694,7 +694,7 @@ def build_relationships():
              "origin": "chat:#platform-leads:2026-09-12T10:00:00Z:mentions"},
             {"src": "chat:#platform-leads:2026-10-15T09:30:00Z", "dst": "project:auth-migration",
              "origin": "chat:#platform-leads:2026-10-15T09:30:00Z:mentions"},
-            {"src": "chat:#platform-leads:2026-09-12T09:00:00Z", "dst": "person:priya-nair",
+            {"src": "chat:#platform-leads:2026-09-12T09:00:00Z", "dst": "person:noah-fenn",
              "origin": "chat:#platform-leads:2026-09-12T09:00:00Z:mentions"},
         ],
         "SOURCED_FROM": [

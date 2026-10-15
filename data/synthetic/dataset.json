@@ -2914,7 +2914,7 @@
         "channel": "#platform-leads",
         "author_name": "Priya Nair",
         "ts": "2026-09-12T09:00:00Z",
-        "text": "Auth migration target moves to 2026-10-01, superseding the 2026-08-15 date.",
+        "text": "Auth migration target moves to 2026-10-01, superseding the 2026-08-15 date. Ping Noah Fenn for the cutover plan.",
         "thread": null,
         "reactions": [],
         "author": "person:priya-nair"
@@ -4253,7 +4253,7 @@
       },
       {
         "src": "chat:#platform-leads:2026-09-12T09:00:00Z",
-        "dst": "person:priya-nair",
+        "dst": "person:noah-fenn",
         "origin": "chat:#platform-leads:2026-09-12T09:00:00Z:mentions"
       }
     ],
