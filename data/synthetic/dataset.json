@@ -1,0 +1,4368 @@
+{
+  "metadata": {
+    "dataset_version": "0.1.0",
+    "synthetic": true,
+    "generated_by": "data/build_synthetic_dataset.py",
+    "last_synced_at": "2026-10-15T00:05:00Z",
+    "record_counts": {
+      "people": 50,
+      "teams": 8,
+      "projects": 13,
+      "tickets": 106,
+      "documents": 20,
+      "decisions": 18,
+      "chat_messages": 70,
+      "history": 40
+    },
+    "authoring_notes": "Synthetic dataset for the demo. No real people, companies, mail, drive or chat. This metadata is never ingested."
+  },
+  "sections": {
+    "people": [
+      {
+        "id": "person:ada-wren",
+        "name": "Ada Wren",
+        "email": "ada.wren@example.com",
+        "role": "Engineering Manager",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:priya-nair",
+        "name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "role": "Staff Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "manager": "person:ada-wren",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:noah-fenn",
+        "name": "Noah Fenn",
+        "email": "noah.fenn@example.com",
+        "role": "Senior Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "manager": "person:ada-wren",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:dana-okoro",
+        "name": "Dana Okoro",
+        "email": "dana.okoro@example.com",
+        "role": "Principal Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:victor-hale",
+        "name": "Victor Hale",
+        "email": "victor.hale@example.com",
+        "role": "VP Engineering",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:platform",
+        "clearance": 3,
+        "access_owner_id": "person:victor-hale"
+      },
+      {
+        "id": "person:ken-zhao",
+        "name": "Ken Zhao",
+        "email": "ken.zhao@example.com",
+        "role": "Security Lead",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:iris-lund",
+        "name": "Iris Lund",
+        "email": "iris.lund@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:mira-sand",
+        "name": "Mira Sand",
+        "email": "mira.sand@example.com",
+        "role": "Product Manager",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:omar-reyes",
+        "name": "Omar Reyes",
+        "email": "omar.reyes@example.com",
+        "role": "Staff Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:zara-zhao",
+        "name": "Zara Zhao",
+        "email": "zara.zhao@example.com",
+        "role": "Staff Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:ines-abara",
+        "name": "Ines Abara",
+        "email": "ines.abara@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:jae-bello",
+        "name": "Jae Bello",
+        "email": "jae.bello@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:kai-cruz",
+        "name": "Kai Cruz",
+        "email": "kai.cruz@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:lena-duarte",
+        "name": "Lena Duarte",
+        "email": "lena.duarte@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:milo-eze",
+        "name": "Milo Eze",
+        "email": "milo.eze@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:nadia-fenn",
+        "name": "Nadia Fenn",
+        "email": "nadia.fenn@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:omar-gupta",
+        "name": "Omar Gupta",
+        "email": "omar.gupta@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:pia-hale",
+        "name": "Pia Hale",
+        "email": "pia.hale@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:quinn-iversen",
+        "name": "Quinn Iversen",
+        "email": "quinn.iversen@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:rex-joki",
+        "name": "Rex Joki",
+        "email": "rex.joki@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:sara-kovac",
+        "name": "Sara Kovac",
+        "email": "sara.kovac@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:timo-lund",
+        "name": "Timo Lund",
+        "email": "timo.lund@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:uma-moreau",
+        "name": "Uma Moreau",
+        "email": "uma.moreau@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:vik-nakamura",
+        "name": "Vik Nakamura",
+        "email": "vik.nakamura@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:wren-okoro",
+        "name": "Wren Okoro",
+        "email": "wren.okoro@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:xena-petrov",
+        "name": "Xena Petrov",
+        "email": "xena.petrov@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:yusuf-quill",
+        "name": "Yusuf Quill",
+        "email": "yusuf.quill@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:zara-reyes",
+        "name": "Zara Reyes",
+        "email": "zara.reyes@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:anya-sand",
+        "name": "Anya Sand",
+        "email": "anya.sand@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:bodhi-tran",
+        "name": "Bodhi Tran",
+        "email": "bodhi.tran@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:cleo-ueda",
+        "name": "Cleo Ueda",
+        "email": "cleo.ueda@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:dario-volkov",
+        "name": "Dario Volkov",
+        "email": "dario.volkov@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:esme-wells",
+        "name": "Esme Wells",
+        "email": "esme.wells@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:farid-xu",
+        "name": "Farid Xu",
+        "email": "farid.xu@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:greta-yilmaz",
+        "name": "Greta Yilmaz",
+        "email": "greta.yilmaz@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:hana-zhao",
+        "name": "Hana Zhao",
+        "email": "hana.zhao@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:ivo-adeyemi",
+        "name": "Ivo Adeyemi",
+        "email": "ivo.adeyemi@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:jonas-brandt",
+        "name": "Jonas Brandt",
+        "email": "jonas.brandt@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:kira-costa",
+        "name": "Kira Costa",
+        "email": "kira.costa@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:lars-dumas",
+        "name": "Lars Dumas",
+        "email": "lars.dumas@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:mara-eng",
+        "name": "Mara Eng",
+        "email": "mara.eng@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:nils-farkas",
+        "name": "Nils Farkas",
+        "email": "nils.farkas@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:oona-grimaldi",
+        "name": "Oona Grimaldi",
+        "email": "oona.grimaldi@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      },
+      {
+        "id": "person:pavel-hoff",
+        "name": "Pavel Hoff",
+        "email": "pavel.hoff@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:devex"
+      },
+      {
+        "id": "person:rosa-igwe",
+        "name": "Rosa Igwe",
+        "email": "rosa.igwe@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:reliability"
+      },
+      {
+        "id": "person:sven-jensen",
+        "name": "Sven Jensen",
+        "email": "sven.jensen@example.com",
+        "role": "Engineer",
+        "department": "Engineering",
+        "start_date": "2024-01-15",
+        "team": "team:platform"
+      },
+      {
+        "id": "person:tara-kelly",
+        "name": "Tara Kelly",
+        "email": "tara.kelly@example.com",
+        "role": "Engineer",
+        "department": "Product",
+        "start_date": "2024-01-15",
+        "team": "team:identity"
+      },
+      {
+        "id": "person:ulf-larsen",
+        "name": "Ulf Larsen",
+        "email": "ulf.larsen@example.com",
+        "role": "Engineer",
+        "department": "Security",
+        "start_date": "2024-01-15",
+        "team": "team:search"
+      },
+      {
+        "id": "person:vera-mbeki",
+        "name": "Vera Mbeki",
+        "email": "vera.mbeki@example.com",
+        "role": "Engineer",
+        "department": "Data",
+        "start_date": "2024-01-15",
+        "team": "team:data"
+      },
+      {
+        "id": "person:wes-novak",
+        "name": "Wes Novak",
+        "email": "wes.novak@example.com",
+        "role": "Engineer",
+        "department": "Operations",
+        "start_date": "2024-01-15",
+        "team": "team:core-infra"
+      }
+    ],
+    "teams": [
+      {
+        "id": "team:platform",
+        "name": "Platform",
+        "lead": "person:ada-wren",
+        "members": [
+          "person:ada-wren",
+          "person:priya-nair",
+          "person:mira-sand"
+        ]
+      },
+      {
+        "id": "team:identity",
+        "name": "Identity",
+        "lead": "person:noah-fenn",
+        "members": [
+          "person:noah-fenn"
+        ]
+      },
+      {
+        "id": "team:search",
+        "name": "Search",
+        "lead": "person:omar-reyes",
+        "members": [
+          "person:omar-reyes"
+        ]
+      },
+      {
+        "id": "team:data",
+        "name": "Data",
+        "lead": "person:iris-lund",
+        "members": [
+          "person:iris-lund"
+        ]
+      },
+      {
+        "id": "team:core-infra",
+        "name": "Core Infra",
+        "lead": "person:ken-zhao",
+        "members": [
+          "person:ken-zhao"
+        ]
+      },
+      {
+        "id": "team:devex",
+        "name": "Developer Experience",
+        "lead": "person:zara-zhao",
+        "members": [
+          "person:zara-zhao"
+        ]
+      },
+      {
+        "id": "team:reliability",
+        "name": "Reliability",
+        "lead": "person:dana-okoro",
+        "members": [
+          "person:dana-okoro"
+        ]
+      },
+      {
+        "id": "team:black-projects",
+        "name": "Black Projects",
+        "lead": "person:ken-zhao",
+        "members": [
+          "person:iris-lund",
+          "person:ken-zhao"
+        ],
+        "clearance": 3,
+        "access_owner_id": "person:victor-hale"
+      }
+    ],
+    "projects": [
+      {
+        "id": "project:auth-migration",
+        "name": "Auth Migration",
+        "department": "Engineering",
+        "status": "open",
+        "priority": "low",
+        "scope": "Deliver the auth migration programme.",
+        "budget": 100000,
+        "target_end": "2026-03-15",
+        "owner": "person:priya-nair",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:identity-provider",
+        "name": "Identity Provider",
+        "department": "Product",
+        "status": "in_review",
+        "priority": "medium",
+        "scope": "Deliver the identity provider programme.",
+        "budget": 125000,
+        "target_end": "2026-04-15",
+        "owner": "person:noah-fenn",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:search-rebuild",
+        "name": "Search Rebuild",
+        "department": "Security",
+        "status": "blocked",
+        "priority": "high",
+        "scope": "Deliver the search rebuild programme.",
+        "budget": 150000,
+        "target_end": "2026-05-15",
+        "owner": "person:omar-reyes",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:billing-revamp",
+        "name": "Billing Revamp",
+        "department": "Data",
+        "status": "done",
+        "priority": "critical",
+        "scope": "Deliver the billing revamp programme.",
+        "budget": 175000,
+        "target_end": "2026-06-15",
+        "owner": "person:mira-sand",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:mobile-onboarding",
+        "name": "Mobile Onboarding",
+        "department": "Operations",
+        "status": "open",
+        "priority": "low",
+        "scope": "Deliver the mobile onboarding programme.",
+        "budget": 200000,
+        "target_end": "2026-07-15",
+        "owner": "person:iris-lund",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:data-warehouse",
+        "name": "Data Warehouse",
+        "department": "Engineering",
+        "status": "in_review",
+        "priority": "medium",
+        "scope": "Deliver the data warehouse programme.",
+        "budget": 225000,
+        "target_end": "2026-08-15",
+        "owner": "person:dana-okoro",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:incident-tooling",
+        "name": "Incident Tooling",
+        "department": "Product",
+        "status": "blocked",
+        "priority": "high",
+        "scope": "Deliver the incident tooling programme.",
+        "budget": 250000,
+        "target_end": "2026-09-15",
+        "owner": "person:ken-zhao",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:api-gateway",
+        "name": "API Gateway",
+        "department": "Security",
+        "status": "done",
+        "priority": "critical",
+        "scope": "Deliver the api gateway programme.",
+        "budget": 275000,
+        "target_end": "2026-10-15",
+        "owner": "person:ada-wren",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:notification-service",
+        "name": "Notification Service",
+        "department": "Data",
+        "status": "open",
+        "priority": "low",
+        "scope": "Deliver the notification service programme.",
+        "budget": 300000,
+        "target_end": "2026-11-15",
+        "owner": "person:anya-sand",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:analytics-dashboard",
+        "name": "Analytics Dashboard",
+        "department": "Operations",
+        "status": "in_review",
+        "priority": "medium",
+        "scope": "Deliver the analytics dashboard programme.",
+        "budget": 325000,
+        "target_end": "2026-03-15",
+        "owner": "person:bodhi-tran",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:compliance-audit",
+        "name": "Compliance Audit",
+        "department": "Engineering",
+        "status": "blocked",
+        "priority": "high",
+        "scope": "Deliver the compliance audit programme.",
+        "budget": 350000,
+        "target_end": "2026-04-15",
+        "owner": "person:cleo-ueda",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:observability-platform",
+        "name": "Observability Platform",
+        "department": "Product",
+        "status": "done",
+        "priority": "critical",
+        "scope": "Deliver the observability platform programme.",
+        "budget": 375000,
+        "target_end": "2026-05-15",
+        "owner": "person:dario-volkov",
+        "sponsor": "person:victor-hale"
+      },
+      {
+        "id": "project:partner-integrations",
+        "name": "Partner Integrations",
+        "department": "Security",
+        "status": "open",
+        "priority": "low",
+        "scope": "Deliver the partner integrations programme.",
+        "budget": 400000,
+        "target_end": "2026-06-15",
+        "owner": "person:esme-wells",
+        "sponsor": "person:victor-hale"
+      }
+    ],
+    "tickets": [
+      {
+        "id": "ticket:AUTH-101",
+        "key": "AUTH-101",
+        "title": "Auth Migration: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-01-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:ada-wren",
+        "reporter": "person:priya-nair",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-102",
+        "key": "AUTH-102",
+        "title": "Auth Migration: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-01-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:priya-nair",
+        "reporter": "person:noah-fenn",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-103",
+        "key": "AUTH-103",
+        "title": "Auth Migration: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-01-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:noah-fenn",
+        "reporter": "person:dana-okoro",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-104",
+        "key": "AUTH-104",
+        "title": "Auth Migration: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-01-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:dana-okoro",
+        "reporter": "person:victor-hale",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-105",
+        "key": "AUTH-105",
+        "title": "Auth Migration: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-01-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:victor-hale",
+        "reporter": "person:ken-zhao",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-106",
+        "key": "AUTH-106",
+        "title": "Auth Migration: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-01-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:ken-zhao",
+        "reporter": "person:iris-lund",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-107",
+        "key": "AUTH-107",
+        "title": "Auth Migration: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-01-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:iris-lund",
+        "reporter": "person:mira-sand",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:AUTH-108",
+        "key": "AUTH-108",
+        "title": "Auth Migration: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-01-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Auth Migration.",
+        "comments": [],
+        "assignee": "person:mira-sand",
+        "reporter": "person:omar-reyes",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:IDP-109",
+        "key": "IDP-109",
+        "title": "Identity Provider: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-02-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:dana-okoro",
+        "reporter": "person:noah-fenn",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-110",
+        "key": "IDP-110",
+        "title": "Identity Provider: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-02-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:victor-hale",
+        "reporter": "person:dana-okoro",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-111",
+        "key": "IDP-111",
+        "title": "Identity Provider: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-02-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:ken-zhao",
+        "reporter": "person:victor-hale",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-112",
+        "key": "IDP-112",
+        "title": "Identity Provider: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-02-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:iris-lund",
+        "reporter": "person:ken-zhao",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-113",
+        "key": "IDP-113",
+        "title": "Identity Provider: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-02-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:mira-sand",
+        "reporter": "person:iris-lund",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-114",
+        "key": "IDP-114",
+        "title": "Identity Provider: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-02-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:omar-reyes",
+        "reporter": "person:mira-sand",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-115",
+        "key": "IDP-115",
+        "title": "Identity Provider: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-02-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:zara-zhao",
+        "reporter": "person:omar-reyes",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:IDP-116",
+        "key": "IDP-116",
+        "title": "Identity Provider: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-02-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Identity Provider.",
+        "comments": [],
+        "assignee": "person:ines-abara",
+        "reporter": "person:zara-zhao",
+        "project": "project:identity-provider"
+      },
+      {
+        "id": "ticket:SRCH-117",
+        "key": "SRCH-117",
+        "title": "Search Rebuild: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-03-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:iris-lund",
+        "reporter": "person:dana-okoro",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-118",
+        "key": "SRCH-118",
+        "title": "Search Rebuild: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-03-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:mira-sand",
+        "reporter": "person:victor-hale",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-119",
+        "key": "SRCH-119",
+        "title": "Search Rebuild: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-03-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:omar-reyes",
+        "reporter": "person:ken-zhao",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-120",
+        "key": "SRCH-120",
+        "title": "Search Rebuild: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-03-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:zara-zhao",
+        "reporter": "person:iris-lund",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-121",
+        "key": "SRCH-121",
+        "title": "Search Rebuild: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-03-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:ines-abara",
+        "reporter": "person:mira-sand",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-122",
+        "key": "SRCH-122",
+        "title": "Search Rebuild: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-03-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:jae-bello",
+        "reporter": "person:omar-reyes",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-123",
+        "key": "SRCH-123",
+        "title": "Search Rebuild: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-03-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:kai-cruz",
+        "reporter": "person:zara-zhao",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:SRCH-124",
+        "key": "SRCH-124",
+        "title": "Search Rebuild: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-03-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Search Rebuild.",
+        "comments": [],
+        "assignee": "person:lena-duarte",
+        "reporter": "person:ines-abara",
+        "project": "project:search-rebuild"
+      },
+      {
+        "id": "ticket:BILL-125",
+        "key": "BILL-125",
+        "title": "Billing Revamp: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-04-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:zara-zhao",
+        "reporter": "person:victor-hale",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-126",
+        "key": "BILL-126",
+        "title": "Billing Revamp: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-04-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:ines-abara",
+        "reporter": "person:ken-zhao",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-127",
+        "key": "BILL-127",
+        "title": "Billing Revamp: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-04-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:jae-bello",
+        "reporter": "person:iris-lund",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-128",
+        "key": "BILL-128",
+        "title": "Billing Revamp: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-04-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:kai-cruz",
+        "reporter": "person:mira-sand",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-129",
+        "key": "BILL-129",
+        "title": "Billing Revamp: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-04-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:lena-duarte",
+        "reporter": "person:omar-reyes",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-130",
+        "key": "BILL-130",
+        "title": "Billing Revamp: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-04-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:milo-eze",
+        "reporter": "person:zara-zhao",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-131",
+        "key": "BILL-131",
+        "title": "Billing Revamp: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-04-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:nadia-fenn",
+        "reporter": "person:ines-abara",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:BILL-132",
+        "key": "BILL-132",
+        "title": "Billing Revamp: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-04-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Billing Revamp.",
+        "comments": [],
+        "assignee": "person:omar-gupta",
+        "reporter": "person:jae-bello",
+        "project": "project:billing-revamp"
+      },
+      {
+        "id": "ticket:MOB-133",
+        "key": "MOB-133",
+        "title": "Mobile Onboarding: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-05-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:kai-cruz",
+        "reporter": "person:ken-zhao",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-134",
+        "key": "MOB-134",
+        "title": "Mobile Onboarding: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-05-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:lena-duarte",
+        "reporter": "person:iris-lund",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-135",
+        "key": "MOB-135",
+        "title": "Mobile Onboarding: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-05-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:milo-eze",
+        "reporter": "person:mira-sand",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-136",
+        "key": "MOB-136",
+        "title": "Mobile Onboarding: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-05-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:nadia-fenn",
+        "reporter": "person:omar-reyes",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-137",
+        "key": "MOB-137",
+        "title": "Mobile Onboarding: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-05-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:omar-gupta",
+        "reporter": "person:zara-zhao",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-138",
+        "key": "MOB-138",
+        "title": "Mobile Onboarding: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-05-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:pia-hale",
+        "reporter": "person:ines-abara",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-139",
+        "key": "MOB-139",
+        "title": "Mobile Onboarding: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-05-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:quinn-iversen",
+        "reporter": "person:jae-bello",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:MOB-140",
+        "key": "MOB-140",
+        "title": "Mobile Onboarding: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-05-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Mobile Onboarding.",
+        "comments": [],
+        "assignee": "person:rex-joki",
+        "reporter": "person:kai-cruz",
+        "project": "project:mobile-onboarding"
+      },
+      {
+        "id": "ticket:DATA-141",
+        "key": "DATA-141",
+        "title": "Data Warehouse: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-06-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:nadia-fenn",
+        "reporter": "person:iris-lund",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-142",
+        "key": "DATA-142",
+        "title": "Data Warehouse: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-06-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:omar-gupta",
+        "reporter": "person:mira-sand",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-143",
+        "key": "DATA-143",
+        "title": "Data Warehouse: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-06-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:pia-hale",
+        "reporter": "person:omar-reyes",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-144",
+        "key": "DATA-144",
+        "title": "Data Warehouse: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-06-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:quinn-iversen",
+        "reporter": "person:zara-zhao",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-145",
+        "key": "DATA-145",
+        "title": "Data Warehouse: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-06-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:rex-joki",
+        "reporter": "person:ines-abara",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-146",
+        "key": "DATA-146",
+        "title": "Data Warehouse: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-06-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:sara-kovac",
+        "reporter": "person:jae-bello",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-147",
+        "key": "DATA-147",
+        "title": "Data Warehouse: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-06-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:timo-lund",
+        "reporter": "person:kai-cruz",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:DATA-148",
+        "key": "DATA-148",
+        "title": "Data Warehouse: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-06-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Data Warehouse.",
+        "comments": [],
+        "assignee": "person:uma-moreau",
+        "reporter": "person:lena-duarte",
+        "project": "project:data-warehouse"
+      },
+      {
+        "id": "ticket:INC-149",
+        "key": "INC-149",
+        "title": "Incident Tooling: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-07-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:quinn-iversen",
+        "reporter": "person:mira-sand",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-150",
+        "key": "INC-150",
+        "title": "Incident Tooling: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-07-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:rex-joki",
+        "reporter": "person:omar-reyes",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-151",
+        "key": "INC-151",
+        "title": "Incident Tooling: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-07-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:sara-kovac",
+        "reporter": "person:zara-zhao",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-152",
+        "key": "INC-152",
+        "title": "Incident Tooling: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-07-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:timo-lund",
+        "reporter": "person:ines-abara",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-153",
+        "key": "INC-153",
+        "title": "Incident Tooling: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-07-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:uma-moreau",
+        "reporter": "person:jae-bello",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-154",
+        "key": "INC-154",
+        "title": "Incident Tooling: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-07-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:vik-nakamura",
+        "reporter": "person:kai-cruz",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-155",
+        "key": "INC-155",
+        "title": "Incident Tooling: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-07-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:wren-okoro",
+        "reporter": "person:lena-duarte",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:INC-156",
+        "key": "INC-156",
+        "title": "Incident Tooling: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-07-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Incident Tooling.",
+        "comments": [],
+        "assignee": "person:xena-petrov",
+        "reporter": "person:milo-eze",
+        "project": "project:incident-tooling"
+      },
+      {
+        "id": "ticket:APIGW-157",
+        "key": "APIGW-157",
+        "title": "API Gateway: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-08-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:timo-lund",
+        "reporter": "person:omar-reyes",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-158",
+        "key": "APIGW-158",
+        "title": "API Gateway: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-08-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:uma-moreau",
+        "reporter": "person:zara-zhao",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-159",
+        "key": "APIGW-159",
+        "title": "API Gateway: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-08-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:vik-nakamura",
+        "reporter": "person:ines-abara",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-160",
+        "key": "APIGW-160",
+        "title": "API Gateway: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-08-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:wren-okoro",
+        "reporter": "person:jae-bello",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-161",
+        "key": "APIGW-161",
+        "title": "API Gateway: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-08-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:xena-petrov",
+        "reporter": "person:kai-cruz",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-162",
+        "key": "APIGW-162",
+        "title": "API Gateway: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-08-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:yusuf-quill",
+        "reporter": "person:lena-duarte",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-163",
+        "key": "APIGW-163",
+        "title": "API Gateway: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-08-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:zara-reyes",
+        "reporter": "person:milo-eze",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:APIGW-164",
+        "key": "APIGW-164",
+        "title": "API Gateway: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-08-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for API Gateway.",
+        "comments": [],
+        "assignee": "person:anya-sand",
+        "reporter": "person:nadia-fenn",
+        "project": "project:api-gateway"
+      },
+      {
+        "id": "ticket:NOTIF-165",
+        "key": "NOTIF-165",
+        "title": "Notification Service: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-09-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:wren-okoro",
+        "reporter": "person:zara-zhao",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-166",
+        "key": "NOTIF-166",
+        "title": "Notification Service: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-09-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:xena-petrov",
+        "reporter": "person:ines-abara",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-167",
+        "key": "NOTIF-167",
+        "title": "Notification Service: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-09-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:yusuf-quill",
+        "reporter": "person:jae-bello",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-168",
+        "key": "NOTIF-168",
+        "title": "Notification Service: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-09-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:zara-reyes",
+        "reporter": "person:kai-cruz",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-169",
+        "key": "NOTIF-169",
+        "title": "Notification Service: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-09-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:anya-sand",
+        "reporter": "person:lena-duarte",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-170",
+        "key": "NOTIF-170",
+        "title": "Notification Service: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-09-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:bodhi-tran",
+        "reporter": "person:milo-eze",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-171",
+        "key": "NOTIF-171",
+        "title": "Notification Service: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-09-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:cleo-ueda",
+        "reporter": "person:nadia-fenn",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:NOTIF-172",
+        "key": "NOTIF-172",
+        "title": "Notification Service: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-09-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Notification Service.",
+        "comments": [],
+        "assignee": "person:dario-volkov",
+        "reporter": "person:omar-gupta",
+        "project": "project:notification-service"
+      },
+      {
+        "id": "ticket:ANLT-173",
+        "key": "ANLT-173",
+        "title": "Analytics Dashboard: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-01-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:zara-reyes",
+        "reporter": "person:ines-abara",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-174",
+        "key": "ANLT-174",
+        "title": "Analytics Dashboard: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-01-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:anya-sand",
+        "reporter": "person:jae-bello",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-175",
+        "key": "ANLT-175",
+        "title": "Analytics Dashboard: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-01-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:bodhi-tran",
+        "reporter": "person:kai-cruz",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-176",
+        "key": "ANLT-176",
+        "title": "Analytics Dashboard: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-01-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:cleo-ueda",
+        "reporter": "person:lena-duarte",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-177",
+        "key": "ANLT-177",
+        "title": "Analytics Dashboard: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-01-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:dario-volkov",
+        "reporter": "person:milo-eze",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-178",
+        "key": "ANLT-178",
+        "title": "Analytics Dashboard: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-01-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:esme-wells",
+        "reporter": "person:nadia-fenn",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-179",
+        "key": "ANLT-179",
+        "title": "Analytics Dashboard: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-01-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:farid-xu",
+        "reporter": "person:omar-gupta",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:ANLT-180",
+        "key": "ANLT-180",
+        "title": "Analytics Dashboard: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-01-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Analytics Dashboard.",
+        "comments": [],
+        "assignee": "person:greta-yilmaz",
+        "reporter": "person:pia-hale",
+        "project": "project:analytics-dashboard"
+      },
+      {
+        "id": "ticket:COMP-181",
+        "key": "COMP-181",
+        "title": "Compliance Audit: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-02-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:cleo-ueda",
+        "reporter": "person:jae-bello",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-182",
+        "key": "COMP-182",
+        "title": "Compliance Audit: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-02-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:dario-volkov",
+        "reporter": "person:kai-cruz",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-183",
+        "key": "COMP-183",
+        "title": "Compliance Audit: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-02-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:esme-wells",
+        "reporter": "person:lena-duarte",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-184",
+        "key": "COMP-184",
+        "title": "Compliance Audit: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-02-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:farid-xu",
+        "reporter": "person:milo-eze",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-185",
+        "key": "COMP-185",
+        "title": "Compliance Audit: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-02-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:greta-yilmaz",
+        "reporter": "person:nadia-fenn",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-186",
+        "key": "COMP-186",
+        "title": "Compliance Audit: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-02-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:hana-zhao",
+        "reporter": "person:omar-gupta",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-187",
+        "key": "COMP-187",
+        "title": "Compliance Audit: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-02-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:ivo-adeyemi",
+        "reporter": "person:pia-hale",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:COMP-188",
+        "key": "COMP-188",
+        "title": "Compliance Audit: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-02-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Compliance Audit.",
+        "comments": [],
+        "assignee": "person:jonas-brandt",
+        "reporter": "person:quinn-iversen",
+        "project": "project:compliance-audit"
+      },
+      {
+        "id": "ticket:OBS-189",
+        "key": "OBS-189",
+        "title": "Observability Platform: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-03-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:farid-xu",
+        "reporter": "person:kai-cruz",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-190",
+        "key": "OBS-190",
+        "title": "Observability Platform: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-03-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:greta-yilmaz",
+        "reporter": "person:lena-duarte",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-191",
+        "key": "OBS-191",
+        "title": "Observability Platform: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-03-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:hana-zhao",
+        "reporter": "person:milo-eze",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-192",
+        "key": "OBS-192",
+        "title": "Observability Platform: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-03-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:ivo-adeyemi",
+        "reporter": "person:nadia-fenn",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-193",
+        "key": "OBS-193",
+        "title": "Observability Platform: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-03-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:jonas-brandt",
+        "reporter": "person:omar-gupta",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-194",
+        "key": "OBS-194",
+        "title": "Observability Platform: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-03-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:kira-costa",
+        "reporter": "person:pia-hale",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-195",
+        "key": "OBS-195",
+        "title": "Observability Platform: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-03-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:lars-dumas",
+        "reporter": "person:quinn-iversen",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:OBS-196",
+        "key": "OBS-196",
+        "title": "Observability Platform: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-03-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Observability Platform.",
+        "comments": [],
+        "assignee": "person:mara-eng",
+        "reporter": "person:rex-joki",
+        "project": "project:observability-platform"
+      },
+      {
+        "id": "ticket:PART-197",
+        "key": "PART-197",
+        "title": "Partner Integrations: work item 1",
+        "status": "done",
+        "priority": "low",
+        "created": "2026-04-01",
+        "resolved": "2026-01-20",
+        "due": "2026-03-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:ivo-adeyemi",
+        "reporter": "person:lena-duarte",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-198",
+        "key": "PART-198",
+        "title": "Partner Integrations: work item 2",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-04-02",
+        "resolved": null,
+        "due": "2026-04-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:jonas-brandt",
+        "reporter": "person:milo-eze",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-199",
+        "key": "PART-199",
+        "title": "Partner Integrations: work item 3",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-04-03",
+        "resolved": null,
+        "due": "2026-05-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:kira-costa",
+        "reporter": "person:nadia-fenn",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-200",
+        "key": "PART-200",
+        "title": "Partner Integrations: work item 4",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-04-04",
+        "resolved": "2026-04-20",
+        "due": "2026-06-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:lars-dumas",
+        "reporter": "person:omar-gupta",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-201",
+        "key": "PART-201",
+        "title": "Partner Integrations: work item 5",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-04-05",
+        "resolved": null,
+        "due": "2026-07-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:mara-eng",
+        "reporter": "person:pia-hale",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-202",
+        "key": "PART-202",
+        "title": "Partner Integrations: work item 6",
+        "status": "in_review",
+        "priority": "medium",
+        "created": "2026-04-06",
+        "resolved": null,
+        "due": "2026-08-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:nils-farkas",
+        "reporter": "person:quinn-iversen",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-203",
+        "key": "PART-203",
+        "title": "Partner Integrations: work item 7",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-04-07",
+        "resolved": "2026-07-20",
+        "due": "2026-09-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:oona-grimaldi",
+        "reporter": "person:rex-joki",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PART-204",
+        "key": "PART-204",
+        "title": "Partner Integrations: work item 8",
+        "status": "done",
+        "priority": "critical",
+        "created": "2026-04-08",
+        "resolved": null,
+        "due": "2026-10-28",
+        "description": "Tracked work for Partner Integrations.",
+        "comments": [],
+        "assignee": "person:pavel-hoff",
+        "reporter": "person:sara-kovac",
+        "project": "project:partner-integrations"
+      },
+      {
+        "id": "ticket:PLAT-882",
+        "key": "PLAT-882",
+        "title": "Auth Migration rollout coordination",
+        "status": "open",
+        "priority": "high",
+        "created": "2026-04-10",
+        "resolved": null,
+        "due": "2026-10-01",
+        "description": "Coordinate the rollout of the auth migration.",
+        "comments": [
+          "Cutover checklist not finalised."
+        ],
+        "assignee": "person:priya-nair",
+        "reporter": "person:ada-wren",
+        "project": "project:auth-migration"
+      },
+      {
+        "id": "ticket:PLAT-883",
+        "key": "PLAT-883",
+        "title": "Auth Migration dependency on identity provider",
+        "status": "blocked",
+        "priority": "high",
+        "created": "2026-05-02",
+        "resolved": null,
+        "due": "2026-09-30",
+        "description": "Depends on the identity provider work.",
+        "comments": [],
+        "assignee": "person:noah-fenn",
+        "reporter": "person:ada-wren",
+        "project": "project:auth-migration"
+      }
+    ],
+    "documents": [
+      {
+        "id": "doc:rfc-031-auth-migration",
+        "title": "rfc-031-auth-migration",
+        "family": "auth-rfc",
+        "version": 1,
+        "created": "2026-04-01",
+        "status": "accepted",
+        "content": "Proposal to migrate authentication. Planned target date 2026-08-15.",
+        "key_facts": [
+          "target date 2026-08-15"
+        ],
+        "url": "https://example.com/docs/rfc-031",
+        "tags": [
+          "auth",
+          "rfc"
+        ],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "doc:auth-internals-notes",
+        "title": "Legacy auth internals notes",
+        "family": "auth-notes",
+        "version": 1,
+        "created": "2025-11-02",
+        "status": "reference",
+        "content": "Notes on the internals of the legacy authentication system.",
+        "key_facts": [
+          "legacy session store"
+        ],
+        "tags": [
+          "auth",
+          "legacy"
+        ],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "doc:platform-strategy",
+        "title": "Platform strategy",
+        "family": "platform-strategy",
+        "version": 1,
+        "created": "2026-03-01",
+        "status": "active",
+        "content": "Platform strategy resting on the managed queue decision.",
+        "key_facts": [
+          "managed queue"
+        ],
+        "tags": [
+          "strategy"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:incident-postmortem",
+        "title": "Queue incident postmortem (restricted)",
+        "family": "queue-postmortem",
+        "version": 1,
+        "created": "2026-05-20",
+        "status": "final",
+        "content": "Restricted postmortem of the queue incident.",
+        "key_facts": [
+          "restricted incident detail"
+        ],
+        "tags": [
+          "incident"
+        ],
+        "author": "person:ken-zhao",
+        "clearance": 3,
+        "access_owner_id": "person:victor-hale"
+      },
+      {
+        "id": "doc:queue-adr",
+        "title": "ADR: managed queue",
+        "family": "queue-adr",
+        "version": 1,
+        "created": "2026-05-02",
+        "status": "accepted",
+        "content": "Decision record adopting the managed queue provider.",
+        "key_facts": [
+          "managed queue provider"
+        ],
+        "tags": [
+          "adr",
+          "queue"
+        ],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "doc:self-host-adr",
+        "title": "ADR: self-hosted queue",
+        "family": "self-host-adr",
+        "version": 1,
+        "created": "2026-09-12",
+        "status": "accepted",
+        "content": "Decision record to self-host the queue, superseding the managed queue.",
+        "key_facts": [
+          "self-hosted queue"
+        ],
+        "tags": [
+          "adr",
+          "queue"
+        ],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "doc:search-elastic-adr",
+        "title": "ADR: search on elastic",
+        "family": "search-adr-elastic",
+        "version": 1,
+        "created": "2026-06-01",
+        "status": "accepted",
+        "content": "Decision record to build search on the managed search engine.",
+        "key_facts": [
+          "managed search engine"
+        ],
+        "tags": [
+          "adr",
+          "search"
+        ],
+        "author": "person:omar-reyes"
+      },
+      {
+        "id": "doc:search-postgres-adr",
+        "title": "ADR: search on postgres",
+        "family": "search-adr-postgres",
+        "version": 1,
+        "created": "2026-07-15",
+        "status": "accepted",
+        "content": "Decision record to build search on the relational database.",
+        "key_facts": [
+          "relational database search"
+        ],
+        "tags": [
+          "adr",
+          "search"
+        ],
+        "author": "person:iris-lund"
+      },
+      {
+        "id": "doc:billing-rfc-v1",
+        "title": "billing-rfc v1",
+        "family": "billing-rfc",
+        "version": 1,
+        "created": "2026-02-01",
+        "status": "superseded",
+        "content": "First version of the billing proposal.",
+        "key_facts": [
+          "billing v1"
+        ],
+        "tags": [
+          "billing",
+          "rfc"
+        ],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "doc:billing-rfc-v2",
+        "title": "billing-rfc v2",
+        "family": "billing-rfc",
+        "version": 2,
+        "created": "2026-06-01",
+        "status": "accepted",
+        "content": "Second version of the billing proposal.",
+        "key_facts": [
+          "billing v2"
+        ],
+        "tags": [
+          "billing",
+          "rfc"
+        ],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "doc:rfc-identity-provider",
+        "title": "RFC: Identity Provider",
+        "family": "rfc-identity-provider",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Identity Provider.",
+        "key_facts": [
+          "Identity Provider draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-mobile-onboarding",
+        "title": "RFC: Mobile Onboarding",
+        "family": "rfc-mobile-onboarding",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Mobile Onboarding.",
+        "key_facts": [
+          "Mobile Onboarding draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-data-warehouse",
+        "title": "RFC: Data Warehouse",
+        "family": "rfc-data-warehouse",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Data Warehouse.",
+        "key_facts": [
+          "Data Warehouse draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-incident-tooling",
+        "title": "RFC: Incident Tooling",
+        "family": "rfc-incident-tooling",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Incident Tooling.",
+        "key_facts": [
+          "Incident Tooling draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-api-gateway",
+        "title": "RFC: API Gateway",
+        "family": "rfc-api-gateway",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for API Gateway.",
+        "key_facts": [
+          "API Gateway draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-notification-service",
+        "title": "RFC: Notification Service",
+        "family": "rfc-notification-service",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Notification Service.",
+        "key_facts": [
+          "Notification Service draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-analytics-dashboard",
+        "title": "RFC: Analytics Dashboard",
+        "family": "rfc-analytics-dashboard",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Analytics Dashboard.",
+        "key_facts": [
+          "Analytics Dashboard draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-compliance-audit",
+        "title": "RFC: Compliance Audit",
+        "family": "rfc-compliance-audit",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Compliance Audit.",
+        "key_facts": [
+          "Compliance Audit draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-observability-platform",
+        "title": "RFC: Observability Platform",
+        "family": "rfc-observability-platform",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Observability Platform.",
+        "key_facts": [
+          "Observability Platform draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "doc:rfc-partner-integrations",
+        "title": "RFC: Partner Integrations",
+        "family": "rfc-partner-integrations",
+        "version": 1,
+        "created": "2026-03-10",
+        "status": "draft",
+        "content": "Proposal for Partner Integrations.",
+        "key_facts": [
+          "Partner Integrations draft"
+        ],
+        "tags": [
+          "rfc"
+        ],
+        "author": "person:ada-wren"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "decision:managed-queue",
+        "key": "DEC-101",
+        "title": "Adopt the managed queue provider",
+        "date": "2026-05-02",
+        "status": "accepted",
+        "description": "We adopt the managed queue provider.",
+        "rationale": "Less operational load.",
+        "impact": "Queue ownership moves to the provider.",
+        "details": {
+          "provider": "managed"
+        },
+        "approvers": [
+          "person:victor-hale",
+          "person:ada-wren"
+        ]
+      },
+      {
+        "id": "decision:self-host-queue",
+        "key": "DEC-114",
+        "title": "Self-host the queue",
+        "date": "2026-09-12",
+        "status": "accepted",
+        "description": "We self-host the queue, reversing the managed provider decision.",
+        "rationale": "Cost and control.",
+        "impact": "Queue operations move in-house.",
+        "details": {
+          "provider": "self-hosted"
+        },
+        "approvers": [
+          "person:ada-wren"
+        ],
+        "dissent": [
+          {
+            "id": "person:dana-okoro",
+            "evidence": [
+              "chat:#platform-leads:2026-09-12T10:05:00Z"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "decision:search-elastic",
+        "key": "DEC-105",
+        "title": "Build search on the managed search engine",
+        "date": "2026-06-01",
+        "status": "accepted",
+        "description": "Search is built on the managed search engine.",
+        "rationale": "Fast to start.",
+        "impact": "Search rebuild depends on the engine.",
+        "details": {
+          "engine": "managed"
+        },
+        "approvers": [
+          "person:omar-reyes"
+        ]
+      },
+      {
+        "id": "decision:search-postgres",
+        "key": "DEC-108",
+        "title": "Build search on the relational database",
+        "date": "2026-07-15",
+        "status": "accepted",
+        "description": "Search is built on the relational database instead.",
+        "rationale": "One less system.",
+        "impact": "Search rebuild direction changes.",
+        "details": {
+          "engine": "relational"
+        },
+        "approvers": [
+          "person:iris-lund"
+        ]
+      },
+      {
+        "id": "decision:vendor-choice",
+        "key": "DEC-090",
+        "title": "Select the incumbent vendor",
+        "date": "2026-04-01",
+        "status": "accepted",
+        "description": "We select the incumbent vendor.",
+        "rationale": "Existing relationship.",
+        "impact": "Procurement continues.",
+        "details": {
+          "vendor": "incumbent"
+        },
+        "approvers": [
+          "person:ada-wren"
+        ]
+      },
+      {
+        "id": "decision:vendor-choice-override",
+        "key": "DEC-112",
+        "title": "Override the vendor choice (restricted)",
+        "date": "2026-08-20",
+        "status": "accepted",
+        "description": "Restricted decision overriding the vendor choice.",
+        "rationale": "Restricted reason.",
+        "impact": "Vendor selection changed.",
+        "details": {
+          "vendor": "replacement"
+        },
+        "approvers": [
+          "person:victor-hale"
+        ],
+        "clearance": 3,
+        "access_owner_id": "person:victor-hale"
+      },
+      {
+        "id": "decision:freeze-hiring",
+        "key": "DEC-110",
+        "title": "Hiring freeze through the quarter",
+        "date": "2026-07-01",
+        "status": "accepted",
+        "description": "Hiring is frozen through the quarter.",
+        "rationale": "Budget control.",
+        "impact": "No new roles open.",
+        "details": {
+          "freeze": true
+        },
+        "approvers": [
+          "person:victor-hale"
+        ]
+      },
+      {
+        "id": "decision:approach-identity-provider",
+        "key": "DEC-201",
+        "title": "Approach for Identity Provider",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Identity Provider.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Identity Provider.",
+        "details": {},
+        "approvers": [
+          "person:noah-fenn"
+        ]
+      },
+      {
+        "id": "decision:approach-billing-revamp",
+        "key": "DEC-203",
+        "title": "Approach for Billing Revamp",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Billing Revamp.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Billing Revamp.",
+        "details": {},
+        "approvers": [
+          "person:mira-sand"
+        ]
+      },
+      {
+        "id": "decision:approach-mobile-onboarding",
+        "key": "DEC-204",
+        "title": "Approach for Mobile Onboarding",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Mobile Onboarding.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Mobile Onboarding.",
+        "details": {},
+        "approvers": [
+          "person:iris-lund"
+        ]
+      },
+      {
+        "id": "decision:approach-data-warehouse",
+        "key": "DEC-205",
+        "title": "Approach for Data Warehouse",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Data Warehouse.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Data Warehouse.",
+        "details": {},
+        "approvers": [
+          "person:dana-okoro"
+        ]
+      },
+      {
+        "id": "decision:approach-incident-tooling",
+        "key": "DEC-206",
+        "title": "Approach for Incident Tooling",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Incident Tooling.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Incident Tooling.",
+        "details": {},
+        "approvers": [
+          "person:ken-zhao"
+        ]
+      },
+      {
+        "id": "decision:approach-api-gateway",
+        "key": "DEC-207",
+        "title": "Approach for API Gateway",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for API Gateway.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes API Gateway.",
+        "details": {},
+        "approvers": [
+          "person:ada-wren"
+        ]
+      },
+      {
+        "id": "decision:approach-notification-service",
+        "key": "DEC-208",
+        "title": "Approach for Notification Service",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Notification Service.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Notification Service.",
+        "details": {},
+        "approvers": [
+          "person:anya-sand"
+        ]
+      },
+      {
+        "id": "decision:approach-analytics-dashboard",
+        "key": "DEC-209",
+        "title": "Approach for Analytics Dashboard",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Analytics Dashboard.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Analytics Dashboard.",
+        "details": {},
+        "approvers": [
+          "person:bodhi-tran"
+        ]
+      },
+      {
+        "id": "decision:approach-compliance-audit",
+        "key": "DEC-210",
+        "title": "Approach for Compliance Audit",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Compliance Audit.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Compliance Audit.",
+        "details": {},
+        "approvers": [
+          "person:cleo-ueda"
+        ]
+      },
+      {
+        "id": "decision:approach-observability-platform",
+        "key": "DEC-211",
+        "title": "Approach for Observability Platform",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Observability Platform.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Observability Platform.",
+        "details": {},
+        "approvers": [
+          "person:dario-volkov"
+        ]
+      },
+      {
+        "id": "decision:approach-partner-integrations",
+        "key": "DEC-212",
+        "title": "Approach for Partner Integrations",
+        "date": "2026-02-20",
+        "status": "accepted",
+        "description": "Chosen approach for Partner Integrations.",
+        "rationale": "Pragmatic.",
+        "impact": "Shapes Partner Integrations.",
+        "details": {},
+        "approvers": [
+          "person:esme-wells"
+        ]
+      }
+    ],
+    "chat_messages": [
+      {
+        "id": "chat:#platform-leads:2026-09-12T09:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Priya Nair",
+        "ts": "2026-09-12T09:00:00Z",
+        "text": "Auth migration target moves to 2026-10-01, superseding the 2026-08-15 date.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#platform-leads:2026-09-12T10:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ada Wren",
+        "ts": "2026-09-12T10:00:00Z",
+        "text": "Reversing the managed queue decision: we are self-hosting the queue now.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#platform-leads:2026-09-12T10:05:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Dana Okoro",
+        "ts": "2026-09-12T10:05:00Z",
+        "text": "I dissent: self-hosting adds operational risk we cannot absorb this quarter.",
+        "thread": "chat:#platform-leads:2026-09-12T10:00:00Z",
+        "reactions": [
+          "thumbsup"
+        ],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#platform-leads:2026-10-15T09:30:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Priya Nair",
+        "ts": "2026-10-15T09:30:00Z",
+        "text": "Cutover went out this morning, all green so far.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#platform-leads:2026-01-01T08:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ada Wren",
+        "ts": "2026-01-01T08:00:00Z",
+        "text": "Status update on work item 1.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#identity:2026-02-02T09:00:00Z",
+        "channel": "#identity",
+        "author_name": "Priya Nair",
+        "ts": "2026-02-02T09:00:00Z",
+        "text": "Status update on work item 2.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#search:2026-03-03T10:00:00Z",
+        "channel": "#search",
+        "author_name": "Noah Fenn",
+        "ts": "2026-03-03T10:00:00Z",
+        "text": "Status update on work item 3.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#data:2026-04-04T11:00:00Z",
+        "channel": "#data",
+        "author_name": "Dana Okoro",
+        "ts": "2026-04-04T11:00:00Z",
+        "text": "Status update on work item 4.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#general:2026-05-05T12:00:00Z",
+        "channel": "#general",
+        "author_name": "Mira Sand",
+        "ts": "2026-05-05T12:00:00Z",
+        "text": "Status update on work item 5.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#platform-leads:2026-06-06T13:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ken Zhao",
+        "ts": "2026-06-06T13:00:00Z",
+        "text": "Status update on work item 6.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#identity:2026-07-07T14:00:00Z",
+        "channel": "#identity",
+        "author_name": "Ada Wren",
+        "ts": "2026-07-07T14:00:00Z",
+        "text": "Status update on work item 7.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#search:2026-08-08T15:00:00Z",
+        "channel": "#search",
+        "author_name": "Priya Nair",
+        "ts": "2026-08-08T15:00:00Z",
+        "text": "Status update on work item 8.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#data:2026-09-09T16:00:00Z",
+        "channel": "#data",
+        "author_name": "Noah Fenn",
+        "ts": "2026-09-09T16:00:00Z",
+        "text": "Status update on work item 9.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#general:2026-01-10T17:00:00Z",
+        "channel": "#general",
+        "author_name": "Dana Okoro",
+        "ts": "2026-01-10T17:00:00Z",
+        "text": "Status update on work item 10.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#platform-leads:2026-02-11T18:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Mira Sand",
+        "ts": "2026-02-11T18:00:00Z",
+        "text": "Status update on work item 11.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#identity:2026-03-12T19:00:00Z",
+        "channel": "#identity",
+        "author_name": "Ken Zhao",
+        "ts": "2026-03-12T19:00:00Z",
+        "text": "Status update on work item 12.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#search:2026-04-13T08:00:00Z",
+        "channel": "#search",
+        "author_name": "Ada Wren",
+        "ts": "2026-04-13T08:00:00Z",
+        "text": "Status update on work item 13.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#data:2026-05-14T09:00:00Z",
+        "channel": "#data",
+        "author_name": "Priya Nair",
+        "ts": "2026-05-14T09:00:00Z",
+        "text": "Status update on work item 14.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#general:2026-06-15T10:00:00Z",
+        "channel": "#general",
+        "author_name": "Noah Fenn",
+        "ts": "2026-06-15T10:00:00Z",
+        "text": "Status update on work item 15.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#platform-leads:2026-07-16T11:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Dana Okoro",
+        "ts": "2026-07-16T11:00:00Z",
+        "text": "Status update on work item 16.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#identity:2026-08-17T12:00:00Z",
+        "channel": "#identity",
+        "author_name": "Mira Sand",
+        "ts": "2026-08-17T12:00:00Z",
+        "text": "Status update on work item 17.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#search:2026-09-18T13:00:00Z",
+        "channel": "#search",
+        "author_name": "Ken Zhao",
+        "ts": "2026-09-18T13:00:00Z",
+        "text": "Status update on work item 18.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#data:2026-01-19T14:00:00Z",
+        "channel": "#data",
+        "author_name": "Ada Wren",
+        "ts": "2026-01-19T14:00:00Z",
+        "text": "Status update on work item 19.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#general:2026-02-20T15:00:00Z",
+        "channel": "#general",
+        "author_name": "Priya Nair",
+        "ts": "2026-02-20T15:00:00Z",
+        "text": "Status update on work item 20.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#platform-leads:2026-03-21T16:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Noah Fenn",
+        "ts": "2026-03-21T16:00:00Z",
+        "text": "Status update on work item 21.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#identity:2026-04-22T17:00:00Z",
+        "channel": "#identity",
+        "author_name": "Dana Okoro",
+        "ts": "2026-04-22T17:00:00Z",
+        "text": "Status update on work item 22.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#search:2026-05-23T18:00:00Z",
+        "channel": "#search",
+        "author_name": "Mira Sand",
+        "ts": "2026-05-23T18:00:00Z",
+        "text": "Status update on work item 23.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#data:2026-06-24T19:00:00Z",
+        "channel": "#data",
+        "author_name": "Ken Zhao",
+        "ts": "2026-06-24T19:00:00Z",
+        "text": "Status update on work item 24.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#general:2026-07-25T08:00:00Z",
+        "channel": "#general",
+        "author_name": "Ada Wren",
+        "ts": "2026-07-25T08:00:00Z",
+        "text": "Status update on work item 25.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#platform-leads:2026-08-26T09:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Priya Nair",
+        "ts": "2026-08-26T09:00:00Z",
+        "text": "Status update on work item 26.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#identity:2026-09-27T10:00:00Z",
+        "channel": "#identity",
+        "author_name": "Noah Fenn",
+        "ts": "2026-09-27T10:00:00Z",
+        "text": "Status update on work item 27.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#search:2026-01-01T11:00:00Z",
+        "channel": "#search",
+        "author_name": "Dana Okoro",
+        "ts": "2026-01-01T11:00:00Z",
+        "text": "Status update on work item 28.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#data:2026-02-02T12:00:00Z",
+        "channel": "#data",
+        "author_name": "Mira Sand",
+        "ts": "2026-02-02T12:00:00Z",
+        "text": "Status update on work item 29.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#general:2026-03-03T13:00:00Z",
+        "channel": "#general",
+        "author_name": "Ken Zhao",
+        "ts": "2026-03-03T13:00:00Z",
+        "text": "Status update on work item 30.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#platform-leads:2026-04-04T14:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ada Wren",
+        "ts": "2026-04-04T14:00:00Z",
+        "text": "Status update on work item 31.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#identity:2026-05-05T15:00:00Z",
+        "channel": "#identity",
+        "author_name": "Priya Nair",
+        "ts": "2026-05-05T15:00:00Z",
+        "text": "Status update on work item 32.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#search:2026-06-06T16:00:00Z",
+        "channel": "#search",
+        "author_name": "Noah Fenn",
+        "ts": "2026-06-06T16:00:00Z",
+        "text": "Status update on work item 33.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#data:2026-07-07T17:00:00Z",
+        "channel": "#data",
+        "author_name": "Dana Okoro",
+        "ts": "2026-07-07T17:00:00Z",
+        "text": "Status update on work item 34.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#general:2026-08-08T18:00:00Z",
+        "channel": "#general",
+        "author_name": "Mira Sand",
+        "ts": "2026-08-08T18:00:00Z",
+        "text": "Status update on work item 35.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#platform-leads:2026-09-09T19:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ken Zhao",
+        "ts": "2026-09-09T19:00:00Z",
+        "text": "Status update on work item 36.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#identity:2026-01-10T08:00:00Z",
+        "channel": "#identity",
+        "author_name": "Ada Wren",
+        "ts": "2026-01-10T08:00:00Z",
+        "text": "Status update on work item 37.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#search:2026-02-11T09:00:00Z",
+        "channel": "#search",
+        "author_name": "Priya Nair",
+        "ts": "2026-02-11T09:00:00Z",
+        "text": "Status update on work item 38.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#data:2026-03-12T10:00:00Z",
+        "channel": "#data",
+        "author_name": "Noah Fenn",
+        "ts": "2026-03-12T10:00:00Z",
+        "text": "Status update on work item 39.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#general:2026-04-13T11:00:00Z",
+        "channel": "#general",
+        "author_name": "Dana Okoro",
+        "ts": "2026-04-13T11:00:00Z",
+        "text": "Status update on work item 40.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#platform-leads:2026-05-14T12:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Mira Sand",
+        "ts": "2026-05-14T12:00:00Z",
+        "text": "Status update on work item 41.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#identity:2026-06-15T13:00:00Z",
+        "channel": "#identity",
+        "author_name": "Ken Zhao",
+        "ts": "2026-06-15T13:00:00Z",
+        "text": "Status update on work item 42.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#search:2026-07-16T14:00:00Z",
+        "channel": "#search",
+        "author_name": "Ada Wren",
+        "ts": "2026-07-16T14:00:00Z",
+        "text": "Status update on work item 43.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#data:2026-08-17T15:00:00Z",
+        "channel": "#data",
+        "author_name": "Priya Nair",
+        "ts": "2026-08-17T15:00:00Z",
+        "text": "Status update on work item 44.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#general:2026-09-18T16:00:00Z",
+        "channel": "#general",
+        "author_name": "Noah Fenn",
+        "ts": "2026-09-18T16:00:00Z",
+        "text": "Status update on work item 45.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#platform-leads:2026-01-19T17:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Dana Okoro",
+        "ts": "2026-01-19T17:00:00Z",
+        "text": "Status update on work item 46.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#identity:2026-02-20T18:00:00Z",
+        "channel": "#identity",
+        "author_name": "Mira Sand",
+        "ts": "2026-02-20T18:00:00Z",
+        "text": "Status update on work item 47.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#search:2026-03-21T19:00:00Z",
+        "channel": "#search",
+        "author_name": "Ken Zhao",
+        "ts": "2026-03-21T19:00:00Z",
+        "text": "Status update on work item 48.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#data:2026-04-22T08:00:00Z",
+        "channel": "#data",
+        "author_name": "Ada Wren",
+        "ts": "2026-04-22T08:00:00Z",
+        "text": "Status update on work item 49.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#general:2026-05-23T09:00:00Z",
+        "channel": "#general",
+        "author_name": "Priya Nair",
+        "ts": "2026-05-23T09:00:00Z",
+        "text": "Status update on work item 50.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#platform-leads:2026-06-24T10:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Noah Fenn",
+        "ts": "2026-06-24T10:00:00Z",
+        "text": "Status update on work item 51.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#identity:2026-07-25T11:00:00Z",
+        "channel": "#identity",
+        "author_name": "Dana Okoro",
+        "ts": "2026-07-25T11:00:00Z",
+        "text": "Status update on work item 52.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#search:2026-08-26T12:00:00Z",
+        "channel": "#search",
+        "author_name": "Mira Sand",
+        "ts": "2026-08-26T12:00:00Z",
+        "text": "Status update on work item 53.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#data:2026-09-27T13:00:00Z",
+        "channel": "#data",
+        "author_name": "Ken Zhao",
+        "ts": "2026-09-27T13:00:00Z",
+        "text": "Status update on work item 54.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#general:2026-01-01T14:00:00Z",
+        "channel": "#general",
+        "author_name": "Ada Wren",
+        "ts": "2026-01-01T14:00:00Z",
+        "text": "Status update on work item 55.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#platform-leads:2026-02-02T15:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Priya Nair",
+        "ts": "2026-02-02T15:00:00Z",
+        "text": "Status update on work item 56.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#identity:2026-03-03T16:00:00Z",
+        "channel": "#identity",
+        "author_name": "Noah Fenn",
+        "ts": "2026-03-03T16:00:00Z",
+        "text": "Status update on work item 57.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#search:2026-04-04T17:00:00Z",
+        "channel": "#search",
+        "author_name": "Dana Okoro",
+        "ts": "2026-04-04T17:00:00Z",
+        "text": "Status update on work item 58.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#data:2026-05-05T18:00:00Z",
+        "channel": "#data",
+        "author_name": "Mira Sand",
+        "ts": "2026-05-05T18:00:00Z",
+        "text": "Status update on work item 59.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#general:2026-06-06T19:00:00Z",
+        "channel": "#general",
+        "author_name": "Ken Zhao",
+        "ts": "2026-06-06T19:00:00Z",
+        "text": "Status update on work item 60.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      },
+      {
+        "id": "chat:#platform-leads:2026-07-07T08:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ada Wren",
+        "ts": "2026-07-07T08:00:00Z",
+        "text": "Status update on work item 61.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ada-wren"
+      },
+      {
+        "id": "chat:#identity:2026-08-08T09:00:00Z",
+        "channel": "#identity",
+        "author_name": "Priya Nair",
+        "ts": "2026-08-08T09:00:00Z",
+        "text": "Status update on work item 62.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:priya-nair"
+      },
+      {
+        "id": "chat:#search:2026-09-09T10:00:00Z",
+        "channel": "#search",
+        "author_name": "Noah Fenn",
+        "ts": "2026-09-09T10:00:00Z",
+        "text": "Status update on work item 63.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:noah-fenn"
+      },
+      {
+        "id": "chat:#data:2026-01-10T11:00:00Z",
+        "channel": "#data",
+        "author_name": "Dana Okoro",
+        "ts": "2026-01-10T11:00:00Z",
+        "text": "Status update on work item 64.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:dana-okoro"
+      },
+      {
+        "id": "chat:#general:2026-02-11T12:00:00Z",
+        "channel": "#general",
+        "author_name": "Mira Sand",
+        "ts": "2026-02-11T12:00:00Z",
+        "text": "Status update on work item 65.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:mira-sand"
+      },
+      {
+        "id": "chat:#platform-leads:2026-03-12T13:00:00Z",
+        "channel": "#platform-leads",
+        "author_name": "Ken Zhao",
+        "ts": "2026-03-12T13:00:00Z",
+        "text": "Status update on work item 66.",
+        "thread": null,
+        "reactions": [],
+        "author": "person:ken-zhao"
+      }
+    ],
+    "history": [
+      {
+        "id": "change:ticket:PLAT-882:assignee:2",
+        "entity_id": "ticket:PLAT-882",
+        "entity_type": "ticket",
+        "field": "assignee",
+        "old_value": "person:noah-fenn",
+        "new_value": "person:priya-nair",
+        "date": "2026-09-01",
+        "reason": "Ownership reassigned after the team move.",
+        "version": 2,
+        "seq": 2,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:project:auth-migration:target_end_date:2",
+        "entity_id": "project:auth-migration",
+        "entity_type": "project",
+        "field": "target_end_date",
+        "old_value": "2026-08-15",
+        "new_value": "2026-10-01",
+        "date": "2026-09-12",
+        "reason": "Target moved after the queue decision.",
+        "version": 2,
+        "seq": 2,
+        "made_by": "person:priya-nair"
+      },
+      {
+        "id": "change:project:auth-migration:status:1",
+        "entity_id": "project:auth-migration",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "open",
+        "date": "2026-01-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:priya-nair"
+      },
+      {
+        "id": "change:project:identity-provider:status:1",
+        "entity_id": "project:identity-provider",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "in_review",
+        "date": "2026-02-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:noah-fenn"
+      },
+      {
+        "id": "change:project:search-rebuild:status:1",
+        "entity_id": "project:search-rebuild",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "blocked",
+        "date": "2026-03-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:omar-reyes"
+      },
+      {
+        "id": "change:project:billing-revamp:status:1",
+        "entity_id": "project:billing-revamp",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "done",
+        "date": "2026-04-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:mira-sand"
+      },
+      {
+        "id": "change:project:mobile-onboarding:status:1",
+        "entity_id": "project:mobile-onboarding",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "open",
+        "date": "2026-05-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:iris-lund"
+      },
+      {
+        "id": "change:project:data-warehouse:status:1",
+        "entity_id": "project:data-warehouse",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "in_review",
+        "date": "2026-06-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:dana-okoro"
+      },
+      {
+        "id": "change:project:incident-tooling:status:1",
+        "entity_id": "project:incident-tooling",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "blocked",
+        "date": "2026-07-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ken-zhao"
+      },
+      {
+        "id": "change:project:api-gateway:status:1",
+        "entity_id": "project:api-gateway",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "done",
+        "date": "2026-08-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:project:notification-service:status:1",
+        "entity_id": "project:notification-service",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "open",
+        "date": "2026-09-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:anya-sand"
+      },
+      {
+        "id": "change:project:analytics-dashboard:status:1",
+        "entity_id": "project:analytics-dashboard",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "in_review",
+        "date": "2026-01-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:bodhi-tran"
+      },
+      {
+        "id": "change:project:compliance-audit:status:1",
+        "entity_id": "project:compliance-audit",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "blocked",
+        "date": "2026-02-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:cleo-ueda"
+      },
+      {
+        "id": "change:project:observability-platform:status:1",
+        "entity_id": "project:observability-platform",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "done",
+        "date": "2026-03-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:dario-volkov"
+      },
+      {
+        "id": "change:project:partner-integrations:status:1",
+        "entity_id": "project:partner-integrations",
+        "entity_type": "project",
+        "field": "status",
+        "old_value": "planned",
+        "new_value": "open",
+        "date": "2026-04-05",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:esme-wells"
+      },
+      {
+        "id": "change:ticket:AUTH-101:status:1",
+        "entity_id": "ticket:AUTH-101",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-01-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:IDP-110:status:1",
+        "entity_id": "ticket:IDP-110",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-02-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:SRCH-119:status:1",
+        "entity_id": "ticket:SRCH-119",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-03-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:BILL-128:status:1",
+        "entity_id": "ticket:BILL-128",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-04-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:MOB-137:status:1",
+        "entity_id": "ticket:MOB-137",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-05-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:DATA-146:status:1",
+        "entity_id": "ticket:DATA-146",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-06-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:INC-155:status:1",
+        "entity_id": "ticket:INC-155",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-07-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:APIGW-164:status:1",
+        "entity_id": "ticket:APIGW-164",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-08-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:NOTIF-165:status:1",
+        "entity_id": "ticket:NOTIF-165",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-09-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:ANLT-174:status:1",
+        "entity_id": "ticket:ANLT-174",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-01-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:COMP-183:status:1",
+        "entity_id": "ticket:COMP-183",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-02-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:OBS-192:status:1",
+        "entity_id": "ticket:OBS-192",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-03-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:PART-201:status:1",
+        "entity_id": "ticket:PART-201",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-04-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:AUTH-106:status:1",
+        "entity_id": "ticket:AUTH-106",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-05-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:IDP-115:status:1",
+        "entity_id": "ticket:IDP-115",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-06-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:SRCH-124:status:1",
+        "entity_id": "ticket:SRCH-124",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-07-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:BILL-125:status:1",
+        "entity_id": "ticket:BILL-125",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-08-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:MOB-134:status:1",
+        "entity_id": "ticket:MOB-134",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-09-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:DATA-143:status:1",
+        "entity_id": "ticket:DATA-143",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-01-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:INC-152:status:1",
+        "entity_id": "ticket:INC-152",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-02-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:APIGW-161:status:1",
+        "entity_id": "ticket:APIGW-161",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-03-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:NOTIF-170:status:1",
+        "entity_id": "ticket:NOTIF-170",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "in_review",
+        "date": "2026-04-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:ANLT-179:status:1",
+        "entity_id": "ticket:ANLT-179",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "blocked",
+        "date": "2026-05-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:COMP-188:status:1",
+        "entity_id": "ticket:COMP-188",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "done",
+        "date": "2026-06-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      },
+      {
+        "id": "change:ticket:OBS-189:status:1",
+        "entity_id": "ticket:OBS-189",
+        "entity_type": "ticket",
+        "field": "status",
+        "old_value": "open",
+        "new_value": "open",
+        "date": "2026-07-12",
+        "reason": "Routine status update.",
+        "version": 1,
+        "seq": 1,
+        "made_by": "person:ada-wren"
+      }
+    ]
+  },
+  "relationships": {
+    "SUPERSEDES": [
+      {
+        "src": "decision:self-host-queue",
+        "dst": "decision:managed-queue",
+        "origin": "chat:#platform-leads:2026-09-12T10:00:00Z"
+      },
+      {
+        "src": "decision:vendor-choice-override",
+        "dst": "decision:vendor-choice",
+        "origin": "decision:vendor-choice-override:supersedes"
+      },
+      {
+        "src": "doc:billing-rfc-v2",
+        "dst": "doc:billing-rfc-v1",
+        "origin": "doc:billing-rfc-v2:family"
+      }
+    ],
+    "DEPENDS_ON": [
+      {
+        "src": "project:auth-migration",
+        "dst": "project:identity-provider",
+        "origin": "project:auth-migration:depends_on"
+      }
+    ],
+    "CONTRADICTS": [
+      {
+        "src": "decision:search-elastic",
+        "dst": "decision:search-postgres",
+        "origin": "decision:search-elastic:contradicts"
+      }
+    ],
+    "AFFECTS": [
+      {
+        "src": "decision:self-host-queue",
+        "dst": "project:auth-migration",
+        "origin": "decision:self-host-queue:affects"
+      },
+      {
+        "src": "decision:search-elastic",
+        "dst": "project:search-rebuild",
+        "origin": "decision:search-elastic:affects"
+      },
+      {
+        "src": "decision:search-postgres",
+        "dst": "project:search-rebuild",
+        "origin": "decision:search-postgres:affects"
+      },
+      {
+        "src": "decision:managed-queue",
+        "dst": "project:auth-migration",
+        "origin": "decision:managed-queue:affects"
+      }
+    ],
+    "DOCUMENTED_IN": [
+      {
+        "src": "decision:managed-queue",
+        "dst": "doc:queue-adr",
+        "origin": "decision:managed-queue:documented_in"
+      },
+      {
+        "src": "decision:self-host-queue",
+        "dst": "doc:self-host-adr",
+        "origin": "decision:self-host-queue:documented_in"
+      },
+      {
+        "src": "decision:search-elastic",
+        "dst": "doc:search-elastic-adr",
+        "origin": "decision:search-elastic:documented_in"
+      },
+      {
+        "src": "decision:search-postgres",
+        "dst": "doc:search-postgres-adr",
+        "origin": "decision:search-postgres:documented_in"
+      },
+      {
+        "src": "decision:managed-queue",
+        "dst": "doc:platform-strategy",
+        "origin": "decision:managed-queue:documented_in"
+      },
+      {
+        "src": "decision:managed-queue",
+        "dst": "doc:incident-postmortem",
+        "origin": "decision:managed-queue:documented_in"
+      }
+    ],
+    "ANNOUNCED_IN": [
+      {
+        "src": "decision:self-host-queue",
+        "dst": "chat:#platform-leads:2026-09-12T10:00:00Z",
+        "origin": "decision:self-host-queue:announced_in"
+      }
+    ],
+    "TRIGGERED": [
+      {
+        "src": "doc:incident-postmortem",
+        "dst": "decision:self-host-queue",
+        "origin": "doc:incident-postmortem:triggered"
+      }
+    ],
+    "MENTIONS": [
+      {
+        "src": "chat:#platform-leads:2026-09-12T09:00:00Z",
+        "dst": "project:auth-migration",
+        "origin": "chat:#platform-leads:2026-09-12T09:00:00Z:mentions"
+      },
+      {
+        "src": "chat:#platform-leads:2026-09-12T10:00:00Z",
+        "dst": "project:auth-migration",
+        "origin": "chat:#platform-leads:2026-09-12T10:00:00Z:mentions"
+      },
+      {
+        "src": "chat:#platform-leads:2026-10-15T09:30:00Z",
+        "dst": "project:auth-migration",
+        "origin": "chat:#platform-leads:2026-10-15T09:30:00Z:mentions"
+      },
+      {
+        "src": "chat:#platform-leads:2026-09-12T09:00:00Z",
+        "dst": "person:priya-nair",
+        "origin": "chat:#platform-leads:2026-09-12T09:00:00Z:mentions"
+      }
+    ],
+    "SOURCED_FROM": [
+      {
+        "src": "decision:self-host-queue",
+        "dst": "doc:self-host-adr",
+        "origin": "decision:self-host-queue:source_from"
+      }
+    ]
+  },
+  "traps": [
+    {
+      "id": "decision-superseded-by-chat",
+      "description": "A decision is superseded, and a chat message says so.",
+      "entities": [
+        "decision:managed-queue",
+        "decision:self-host-queue",
+        "chat:#platform-leads:2026-09-12T10:00:00Z"
+      ]
+    },
+    {
+      "id": "reassignment-owner-vs-expert",
+      "description": "Owner moved teams but remains the expert on the old internals.",
+      "entities": [
+        "project:auth-migration",
+        "person:priya-nair",
+        "person:noah-fenn",
+        "ticket:PLAT-882",
+        "doc:auth-internals-notes"
+      ]
+    },
+    {
+      "id": "stale-strategy-document",
+      "description": "A current document rests on a superseded decision.",
+      "entities": [
+        "doc:platform-strategy",
+        "decision:managed-queue"
+      ]
+    },
+    {
+      "id": "dissenter-with-evidence",
+      "description": "A dissenting person with message evidence.",
+      "entities": [
+        "decision:self-host-queue",
+        "person:dana-okoro",
+        "chat:#platform-leads:2026-09-12T10:05:00Z"
+      ]
+    },
+    {
+      "id": "nonexistent-figure",
+      "description": "No record states the auth migration completion percentage.",
+      "entities": []
+    },
+    {
+      "id": "false-premise",
+      "description": "Hiring is frozen, so a premise that hiring is open is false.",
+      "entities": [
+        "decision:freeze-hiring"
+      ]
+    },
+    {
+      "id": "two-conflicting-current-decisions",
+      "description": "Two current decisions on one project contradict each other.",
+      "entities": [
+        "project:search-rebuild",
+        "decision:search-elastic",
+        "decision:search-postgres"
+      ]
+    },
+    {
+      "id": "hidden-depends-on",
+      "description": "A non-obvious project dependency only recorded as DEPENDS_ON.",
+      "entities": [
+        "project:auth-migration",
+        "project:identity-provider"
+      ]
+    },
+    {
+      "id": "restricted-doc-linked-to-visible-decision",
+      "description": "A clearance 3 document is linked to a visible decision.",
+      "entities": [
+        "doc:incident-postmortem",
+        "decision:managed-queue"
+      ]
+    },
+    {
+      "id": "restricted-only-intermediate-hop",
+      "description": "Two visible people are linked only through a restricted team.",
+      "entities": [
+        "team:black-projects",
+        "person:iris-lund",
+        "person:ken-zhao"
+      ]
+    },
+    {
+      "id": "restricted-superseder",
+      "description": "A restricted decision supersedes a visible decision.",
+      "entities": [
+        "decision:vendor-choice",
+        "decision:vendor-choice-override"
+      ]
+    },
+    {
+      "id": "post-sync-records",
+      "description": "A record is dated after last_synced_at.",
+      "entities": [
+        "chat:#platform-leads:2026-10-15T09:30:00Z"
+      ]
+    }
+  ]
+}

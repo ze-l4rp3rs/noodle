@@ -70,3 +70,54 @@ and plural/provenance edges as typed relationship lists in a `relationships`
 section (DEPENDS_ON, SUPERSEDES, AFFECTS, DOCUMENTED_IN, MENTIONS, DISSENTS,
 SOURCE_FROM, TRIGGERED, BLOCKED, etc.). This mirrors spec 04's "reference fields"
 and "relationship lists" sources and keeps both ingestion paths exercised.
+
+## Step 2 — schema module and dataset
+
+### D2.1 The generated dataset is committed
+
+`data/build_synthetic_dataset.py` is a deterministic generator; its output
+`data/synthetic/dataset.json` is committed too. Steps 3 (ingestion) and 4
+(queries) need the dataset, and step 15's "fresh checkout to a working `/ask`"
+should not require an extra generation step. `tests/test_dataset.py::
+test_dataset_is_reproducible` rebuilds the dataset in-process and asserts it
+equals the committed file, so the two cannot drift. The dataset is data, not a
+build artifact, so it is not git-ignored.
+
+### D2.2 `validate_dataset` has relaxed modes for the hand fixture
+
+The synthetic dataset must satisfy metadata, count-range and trap-presence
+checks ("counts match, all references resolve, every trap present"). The 10-node
+hand fixture is deliberately smaller and has no traps, so `validate_dataset`
+takes `require_metadata` / `require_counts` / `require_traps` flags (default
+true). The fixture is validated with counts and traps relaxed but reference
+resolution always on.
+
+### D2.3 Dissent evidence entry shape
+
+A `decisions.dissent` entry is `{"id": <person-id>, "evidence": [<id>...]}`. The
+reference is under a generic `id` key, so `dataset.py` needs no section-to-
+singular name map; `schema.REFERENCE_FIELDS` already carries `target_section` and
+`evidence=True`. Evidence ids must resolve (04: "Evidence ids that point to
+nothing are reported, never silently dropped").
+
+### D2.4 `DISSENTS` is produced from the decision field only
+
+Spec 02 sources `DISSENTS` from the decision `dissent` field ("carries
+evidence"). It is therefore **not** also listed in the dataset's `relationships`
+section, to avoid two producers for one edge. `SOURCED_FROM` from decision
+evidence is derived by ingestion (step 3) from the same field.
+
+### D2.5 Metadata carries `record_counts`; "counts match" is checked against it
+
+`metadata.record_counts` records the intended per-section counts and
+`validate_dataset` fails if they differ from the actual section lengths. This
+turns step 2's "counts match" into one explicit check on top of the range checks
+in `COUNT_RANGES` / `MIN_COUNTS`.
+
+### D2.6 Traps are tagged with the entity ids they rest on
+
+Every trap in `REQUIRED_TRAP_IDS` also lists the dataset ids it depends on;
+`validate_dataset` resolves those ids, so a trap cannot silently lose its data
+while the id still appears in the list. The "nonexistent-figure" trap has no
+entities by design (its point is that no record states the figure).
+
