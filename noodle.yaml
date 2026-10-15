@@ -1,0 +1,17 @@
+# Noodle configuration. One file holds every setting. Secrets never belong here:
+# provider entries name the environment variable that holds the key, not the key.
+# Environment overrides: FALKORDB_URL, NOODLE_ENV, and the provider key variables.
+
+graph:
+  url: localhost:6379
+  name: noodle
+  embedding_dimension: 1536
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  debug: false
+  max_live_update_size_mb: 1
+
+logs:
+  folder: ./runs

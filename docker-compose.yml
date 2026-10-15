@@ -1,0 +1,19 @@
+# Local FalkorDB. The API service is added at step 15 (deploy); step 1 needs only
+# a healthy graph to prove ensure_schema() is idempotent.
+services:
+  falkordb:
+    image: falkordb/falkordb:latest
+    container_name: noodle-falkordb
+    ports:
+      - "6379:6379"
+    volumes:
+      - falkordb_data:/var/lib/falkordb/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  falkordb_data: {}
