@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any, Optional
 
-from noodle.graph import GraphError
+from noodle.graph import GraphError, GraphResult
 
 
 class FakeResult:
@@ -55,6 +56,51 @@ class FakeWriter:
             raise GraphError(f"write query failed: Attribute '{field}' is already indexed")
         self.seen.add(cypher)
         return FakeResult([], [])
+
+
+def graph_result(rows: list[dict], cypher: str = "") -> GraphResult:
+    """A prepared read result, as the real client would return it."""
+
+    return GraphResult(rows=[dict(r) for r in rows], header=list(rows[0]) if rows else [],
+                       cypher=cypher, params={})
+
+
+def hidden_result(count: int = 0, owners: Optional[list[str]] = None) -> GraphResult:
+    """A prepared hidden-twin result (Q13): count and access owners only."""
+
+    return graph_result([{"count": count, "owners": list(owners or [])}])
+
+
+class RecordingGraphClient:
+    """The recording graph client (09): records every query and its params,
+    answers with prepared rows matched by a substring of the statement.
+
+    ``responses`` is a sequence of ``(matcher, result)`` pairs: ``matcher`` is a
+    substring expected in the Cypher text (or a callable taking the Cypher), and
+    ``result`` is a :class:`GraphResult` or an exception to raise. Each response
+    is consumed once; a query no response matches fails the test.
+    """
+
+    def __init__(self, *responses: tuple[Any, Any]):
+        self._pending: list[tuple[Any, Any]] = list(responses)
+        self.calls: list[tuple[str, dict]] = []
+
+    @property
+    def cyphers(self) -> list[str]:
+        return [cypher for cypher, _ in self.calls]
+
+    def ro_query(self, cypher: str, params: Optional[dict] = None, timeout: Any = None) -> GraphResult:
+        self.calls.append((cypher, dict(params or {})))
+        for index, (matcher, result) in enumerate(self._pending):
+            hit = matcher(cypher) if callable(matcher) else (matcher in cypher)
+            if not hit:
+                continue
+            self._pending.pop(index)
+            if isinstance(result, Exception):
+                raise result
+            prepared = result if isinstance(result, GraphResult) else graph_result(result)
+            return replace(prepared, cypher=cypher, params=dict(params or {}))
+        raise AssertionError(f"unexpected query: {cypher}")
 
 
 class FakeIngestGraph:

@@ -210,3 +210,46 @@ Spec 03 makes the query file the source of truth and `queries.md` a required
 artifact (check.sh item 9). `render_markdown()` walks `QUERY_DOCS` and embeds
 each function's source; `scripts/gen_queries_md.py` writes the file, and a unit
 test fails if the committed file is stale.
+## Step 5 — tools and evidence
+
+### D5.1 Queries return evidence-rich rows; tools convert, never query
+
+Tools never build Cypher (a source-scan test pins it), so the queries that
+feed evidence were extended to return the fields citations need: Q4 sources
+now carry label/text/date/url per source record, Q8 returns the stale
+document's content and metadata, Q9 returns the names along each path, and Q11
+returns one row per affected node (id, name, kind) instead of a single list.
+
+### D5.2 `ref` is the record's own graph id; derived statements compose theirs
+
+Evidence refs are the record ids (two chat messages in one channel get
+different refs, pinned by a unit test). Role statements combine
+`role:{REL}:{person}:{entity}` and connections `connection:{a}|{b}|{index}` —
+derived kinds mirroring the spec's role-statement pattern, one per path.
+
+### D5.3 Currency is reported, not guessed, when the superseder is hidden
+
+`trace_decision` folds Q4, Q5, the chain and their twins together. When a
+decision is not current and the current head is visible, the tool names it;
+when the twin shows a hidden superseder, the tool reports
+`currency: "cannot_confirm"` and names nothing (06). A hidden anchor looked up
+by id also raises the soft dead-end: the tool merges `hidden_twin_entity(ref)`
+alongside the sources twin. Twin counts may double-count a node seen by two
+twins; only the boolean is consumed at the API level.
+
+### D5.4 What the model sees never includes hidden info or traces
+
+`ToolResult` carries evidence, traces and the merged hidden twin, but
+`to_payload()` (the model-facing shape) exposes evidence, note and payload
+only — counts, owners and Cypher stay on the system side (A4). The loop's
+reuse marker lives on `ToolResult.reused`, set later by the tool loop.
+
+### D5.5 FalkorDB persistence reload breaks boolean-false scans; Q8 avoids them
+
+After a container restart, Redis reload left the main graph unable to match
+`{current: false}` or `= false` (0 rows) while `NOT x.current`, `<> true` and
+direct property reads kept working; a freshly written graph matched all forms.
+Q8 now filters with `NOT d.current`, which holds on both encodings, and the
+main graph was rebuilt (`GRAPH.DELETE` + bootstrap). Ingestion fingerprints
+are Python-side strings, so they cannot detect this encoding damage — a
+re-ingest reports "unchanged" either way.

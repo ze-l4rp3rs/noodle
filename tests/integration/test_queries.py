@@ -280,9 +280,10 @@ def test_q10_team_impact(graph):
 
 def test_q11_blast_radius(graph):
     _, reader = graph
-    res = Q.q11_blast_radius(reader, INTERNAL, "decision:self-host-queue")
-    assert res.rows
-    assert res.rows[0]["affected"]
+    rows = Q.q11_blast_radius(reader, INTERNAL, "decision:self-host-queue").rows
+    assert rows
+    assert any(r["id"] == "project:auth-migration" for r in rows)
+    assert all(r["kind"] == "Project" for r in rows)
 
 
 def test_q12_freshness_matches_the_dataset(graph):

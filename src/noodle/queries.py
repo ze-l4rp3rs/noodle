@@ -64,6 +64,18 @@ class HiddenInfo:
         return self.count > 0
 
 
+def merge_hidden(*infos: HiddenInfo) -> HiddenInfo:
+    """Combine the twins of several queries run by one tool. Only the boolean
+    matters at the API level (06), so a node counted by two twins is harmless."""
+
+    owners: set[str] = set()
+    for info in infos:
+        owners.update(info.access_owners)
+    return HiddenInfo(
+        count=sum(info.count for info in infos), access_owners=tuple(sorted(owners))
+    )
+
+
 @dataclass
 class QueryResult:
     rows: list[dict[str, Any]]
@@ -352,7 +364,10 @@ def q4_decision_trace(client: GraphClient, user: UserCtx, ref: str) -> QueryResu
         "OPTIONAL MATCH (d)-[s]-(src) "
         "WHERE type(s) IN $source_types AND src.clearance <= $clr "
         "WITH d, approvers, dissent, "
-        "collect(DISTINCT {id: src.id, kind: head(labels(src)), status: src.status, current: src.current})[..12] AS sources "
+        "collect(DISTINCT {id: src.id, kind: head(labels(src)), status: src.status, current: src.current, "
+        "label: coalesce(src.title, src.key, src.channel, src.name), "
+        "text: coalesce(src.content, src.text, src.description), "
+        "date: coalesce(src.created, src.ts, src.date), url: src.url})[..12] AS sources "
         "RETURN d.id AS id, d.key AS key, d.title AS title, d.date AS date, d.status AS status, "
         "d.description AS description, d.rationale AS rationale, d.impact AS impact, "
         "d.details AS details, d.current AS current, approvers, dissent, sources"
@@ -475,10 +490,15 @@ def q8_stale_documents(client: GraphClient, user: UserCtx) -> QueryResult:
     """Current documents resting on a superseded decision."""
 
     cypher = (
-        "MATCH (d:" + schema.LABEL_DECISION + " {current: false})-[:DOCUMENTED_IN]->"
+        "MATCH (d:" + schema.LABEL_DECISION + ")-[:DOCUMENTED_IN]->"
         "(doc:" + schema.LABEL_DOCUMENT + " {current: true}) "
-        "WHERE d.clearance <= $clr AND doc.clearance <= $clr "
-        "RETURN doc.id AS doc_id, doc.title AS title, collect(DISTINCT d.id) AS superseded_decisions"
+        # NB: ``NOT d.current`` instead of ``{current: false}``: after a Redis
+        # persistence reload this engine fails boolean-false scan comparisons
+        # while NOT / <> true keep working on the same data.
+        "WHERE NOT d.current AND d.clearance <= $clr AND doc.clearance <= $clr "
+        "RETURN doc.id AS doc_id, doc.title AS title, doc.content AS content, doc.url AS url, "
+        "doc.family AS family, doc.version AS version, doc.created AS created, doc.current AS current, "
+        "collect(DISTINCT d.id) AS superseded_decisions"
     )
     params = user.params()
     res = client.ro_query(cypher, params)
@@ -502,7 +522,9 @@ def q9_connection(
         "WITH a, b "
         "MATCH p = (a)-[*1.." + str(int(depth)) + "]-(b) "
         "WHERE ALL(x IN nodes(p) WHERE x.clearance <= $clr) "
-        "RETURN [x IN nodes(p) | x.id] AS nodes, [e IN relationships(p) | type(e)] AS rels, "
+        "RETURN [x IN nodes(p) | x.id] AS nodes, "
+        "[x IN nodes(p) | coalesce(x.name, x.title, x.key, x.channel, x.id)] AS names, "
+        "[e IN relationships(p) | type(e)] AS rels, "
         "length(p) AS length ORDER BY length LIMIT $limit"
     )
     params = user.params(a=a, b=b, limit=max(1, int(limit)))
@@ -554,7 +576,7 @@ def q11_blast_radius(
         "MATCH (d:" + schema.LABEL_DECISION + " {id: $id}) WHERE d.clearance <= $clr "
         "CALL algo.BFS(d, $depth, 'AFFECTS') YIELD nodes "
         "UNWIND nodes AS n WITH n WHERE n.clearance <= $clr "
-        "RETURN collect(DISTINCT n.id) AS affected"
+        "RETURN n.id AS id, coalesce(n.name, n.title, n.key) AS name, head(labels(n)) AS kind"
     )
     params = user.params(id=ref, depth=int(depth))
     res = client.ro_query(cypher, params)
@@ -721,6 +743,7 @@ def render_markdown() -> str:
 __all__ = [
     "UserCtx",
     "HiddenInfo",
+    "merge_hidden",
     "QueryResult",
     "q1_search",
     "q2_owners",
