@@ -45,7 +45,12 @@ ToolSet = Union[Mapping[str, Tool], Sequence[str], None]
 @dataclass
 class ToolCallRecord:
     """One entry in the run log (05 section 7): what ran, what it cost and
-    whether it wrote a source. Never carries hidden content."""
+    whether it wrote a source. Never carries hidden content.
+
+    ``queries`` carries one redacted summary per Cypher statement the tool ran
+    (the exact statement, its redacted params and the node/edge ids it touched),
+    so the API's ``graph_trace`` can show the exact Cypher executed (07, A6).
+    """
 
     tool: str
     args: dict[str, Any]
@@ -57,6 +62,7 @@ class ToolCallRecord:
     edge_ids: list[str] = field(default_factory=list)
     duration_ms: float = 0.0
     reused: bool = False
+    queries: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -91,6 +97,20 @@ def _resolve_tools(tools: ToolSet) -> dict[str, Tool]:
 
 def _cache_key(call: ToolCall) -> tuple[str, str]:
     return (call.name, json.dumps(dict(call.arguments), sort_keys=True, default=str))
+
+
+def _redacted_query(trace: QueryResult) -> dict[str, Any]:
+    """One graph_trace entry (07): the exact Cypher, its redacted params and the
+    ids/row count it produced. Params are already redacted in the queries layer
+    (A4); hidden counts never appear here (A4)."""
+
+    return {
+        "cypher": trace.cypher,
+        "params": dict(trace.params),
+        "node_ids": list(trace.node_ids),
+        "edge_ids": list(trace.edge_ids),
+        "rows": len(trace.rows),
+    }
 
 
 def _call_tool(
@@ -129,6 +149,7 @@ def _call_tool(
         node_ids=[nid for trace in result.trace for nid in trace.node_ids],
         edge_ids=[eid for trace in result.trace for eid in trace.edge_ids],
         duration_ms=(time.perf_counter() - started) * 1000,
+        queries=[_redacted_query(trace) for trace in result.trace],
     )
     return record, result
 
@@ -210,6 +231,7 @@ def run_tool_loop(
                 record = ToolCallRecord(
                     call.name, dict(call.arguments), "reused", reused=True,
                     rows=len(cached.evidence), sources=[e.ref for e in cached.evidence],
+                    queries=[_redacted_query(trace) for trace in cached.trace],
                 )
                 records.append(record)
                 conversation.append(

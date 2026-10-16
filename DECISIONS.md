@@ -447,3 +447,80 @@ contains a `kind:id` (common: a role sentence names its entity) was flagged
 check now scans `_strip_quotes(sentence.text)`: only the model's own prose, since
 the quoted source is already verified verbatim. A `kind:id` written as prose is
 still flagged; a quoted one is not.
+
+## Step 9 — API and response
+
+### D9.1 One response builder; the CLI and `/ask` share the service
+
+`noodle.response.build_response` is the only renderer of the 07 response object,
+and `noodle.service.answer` is the only run (generate → check → review → fix →
+build). The CLI (`noodle.cli`) prints exactly the dict `/ask` returns, so the
+same run yields the same response through either entry point (the step's
+done-when). `answer` returns `(response, run)`: the API needs the run to emit the
+SSE stream, and the CLI ignores it. Two runs never share citation ids
+(`secrets.token_hex` per run), so the parity test and `check.sh` item 3 seed the
+`SourceRegistry` rng and strip the measured timings (`processingTimeMs`,
+`graph_trace[].duration_ms`) before comparing.
+
+### D9.2 `graph_trace` is per Cypher statement, recorded by the loop
+
+07 wants the exact Cypher a tool ran. A tool issues one to several statements, so
+`ToolCallRecord` gained a `queries` list of redacted per-statement summaries
+(`cypher`, `params`, `node_ids`, `edge_ids`, `rows`), populated on both the run
+and the reuse paths in `noodle.loop`. `build_response` flattens one `graph_trace`
+entry per statement, carrying the call's `duration_ms` and `reused`. Params stay
+redacted (`clr` and friends never leave the query layer, A4) and hidden node ids
+never appear — only what the visible query returned.
+
+### D9.3 SSE is reconstructed from the finished run, not streamed live
+
+The pipeline is synchronous, so the step-9 stream is a faithful reconstruction of
+the 07 events (`router`, `tool_call`, `tool_result`, `draft`, `review`, `answer`)
+from the completed run; `/ask` still runs the whole answer first. Live,
+incremental emission belongs with the router (step 10), which is what actually
+decides the mode and the tool rounds. The UI contract is identical either way, so
+it can be built against this stream now.
+
+### D9.4 A graph outage is 503, checked before any model call
+
+`service.answer` probes the graph (`Runtime.graph_up`) before the first provider
+call and raises `GraphDownError`; `/ask` maps it (and any `GraphError`) to `503`
+with `{status:"down", graph:"down"}`. `GET /health` reports the same probe. This
+makes "never a cached or model-only answer" (07) structural: the provider is not
+reached when the graph is down.
+
+### D9.5 Dev identity is the `X-Noodle-User` header; full auth is step 11
+
+Until the auth middleware and `/users` land (step 11), `/ask` reads the dev header
+`X-Noodle-User` as the caller's Person id (default clearance, 1) and treats an
+absent header as anonymous (clearance 0, which leaks nothing). In production
+(`NOODLE_ENV=prod`) the header is ignored. `Authorization: Bearer` mapping to a
+Person is step 11.
+
+### D9.6 Deferred fields keep the 07 shape complete
+
+`freshness.as_of` is read from the run's own `get_freshness` trace when the model
+called it, and `live_intent` is `false` until the router sets it (step 10); the
+service does not yet force a freshness call. `proposed_actions` is derived from
+`draft_followup` tool calls (empty in fast mode, which has no such tool) with
+`requires_confirmation` always `true`; step 12 refines draft sources.
+`access_notices` uses the access owner's person id as `contact` — 06 explicitly
+allows returning `access_owner_id` — and falls back to "your administrator" text
+when there is no owner; resolving the id to a display name is step 11. Every
+field is present with the documented type now, so clients are not built against a
+shifting schema.
+
+### D9.7 `check.sh` item 3 is now a real simulated run
+
+`scripts/check_simulated_run.py` answers one question through the CLI path and
+through `/ask` with two identical deterministic runtimes and asserts the
+responses match and that a one-letter-off quote was repaired from the source. It
+replaces the step-1 placeholder skip in `scripts/check.sh`.
+
+### D9.8 `provider_from_settings` builds the real adapters
+
+`noodle.providers.provider_from_settings(name, entries)` maps a configured
+provider name to its adapter (anthropic / google / openai / groq), reading the key
+from the entry's `key_env` at call time; the key is never stored in config (07).
+It is used by `service.build_runtime`, keeping tests free to inject a
+`ScriptedProvider` and never construct a real client.

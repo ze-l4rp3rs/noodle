@@ -648,3 +648,31 @@ def select_provider(
     raise ProviderSelectionError(
         "no provider key is set; set one of: " + ", ".join(wanted) if wanted else "no providers configured"
     )
+
+
+_ADAPTERS: dict[str, type[Provider]] = {
+    "anthropic": AnthropicProvider,
+    "google": GoogleProvider,
+    "openai": OpenAICompatProvider,
+    "groq": OpenAICompatProvider,  # same /chat/completions shape
+}
+
+
+def provider_from_settings(name: str, entries: Sequence[ProviderChoice]) -> Provider:
+    """Build the adapter for ``name``, reading its key from the named env var.
+
+    The key itself is never stored in config: an entry names the environment
+    variable that holds it (07). An unknown provider names the ones configured.
+    """
+
+    entry = next((item for item in entries if item.name == name), None)
+    if entry is None:
+        known = [item.name for item in entries]
+        raise ProviderSelectionError(f"unknown provider {name!r}; configured: {known}")
+    adapter = _ADAPTERS.get(name)
+    if adapter is None:
+        raise ProviderSelectionError(
+            f"no adapter for provider {name!r}; known adapters: {sorted(_ADAPTERS)}"
+        )
+    return adapter(os.environ.get(entry.key_env))
+

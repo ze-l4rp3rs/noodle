@@ -57,10 +57,11 @@ PY
 then pass "all modules import"; else fail "a module failed to import"; fi
 
 echo "== 3. simulated CLI+API run (misquote repaired) =="
-if [[ -f "$ROOT/src/noodle/queries.py" ]]; then
-  skip "plain query module present but pipeline arrives later"
+if "$PYTHON" "$ROOT/scripts/check_simulated_run.py" >/dev/null 2>&1; then
+  pass "CLI and API agree; the misquote is repaired"
 else
-  skip "answer pipeline arrives at step 7/9"
+  "$PYTHON" "$ROOT/scripts/check_simulated_run.py"
+  fail "simulated CLI+API run"
 fi
 
 echo "== 4. unit suite =="

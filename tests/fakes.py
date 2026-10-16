@@ -81,13 +81,19 @@ class RecordingGraphClient:
     is consumed once; a query no response matches fails the test.
     """
 
-    def __init__(self, *responses: tuple[Any, Any]):
+    def __init__(self, *responses: tuple[Any, Any], up: bool = True):
         self._pending: list[tuple[Any, Any]] = list(responses)
         self.calls: list[tuple[str, dict]] = []
+        self.up = up
 
     @property
     def cyphers(self) -> list[str]:
         return [cypher for cypher, _ in self.calls]
+
+    def ping(self) -> bool:
+        """Graph liveness for ``/health`` and the pre-answer outage check."""
+
+        return self.up
 
     def ro_query(self, cypher: str, params: Optional[dict] = None, timeout: Any = None) -> GraphResult:
         self.calls.append((cypher, dict(params or {})))
