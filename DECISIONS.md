@@ -312,3 +312,67 @@ read-only views; the router (step 10) consumes `modes`.
 imported only inside a default transport, so importing `noodle.providers` never
 pulls in a library for an unused provider; a test asserts none is imported.
 Unit tests never call a real model: adapters run through injected transports.
+
+## Step 7 — sources, citations and automatic checks
+
+### D7.1 The citation format is self-defined (`message.txt` is absent)
+
+The spec extends "the sample in `message.txt`", but that file is not in the
+repo, so the format is pinned by 05 section 1 and the 07 sample: each fact is
+followed by `[[<8-hex-id>]]` and the exact words it rests on in straight or
+typographic quotes, e.g. `The owner is Omar. [[09a121fe]] "The rollout owner is
+Omar Diaz."`. The marker stays in `answer`; the quotes move into
+`references[].excerpt`/`quotes` when the answer is rendered. A source id is
+random per run (`secrets.token_hex(4)`), unique within the run, and cannot be
+guessed from retrieved text. `SourceRegistry` dedupes by the record's own ref
+(or, for a ref-less item, kind/text/date/label), so two tools reporting one
+record yield one reference; an injectable rng makes the ids deterministic in
+tests.
+
+### D7.2 What quote matching forgives, and the repair threshold
+
+Figure 3 of 05: case, whitespace, typographic quotes and dashes are forgiven,
+**and nothing else**. `normalize` maps curly quotes/apostrophes and en/em dashes
+to ASCII, collapses whitespace and case-folds. An ellipsis (`...` or `…`) may
+skip words inside a quote; the remaining fragments must appear in order. Repair
+replaces a quote that is not in its source with the most similar passage of
+about the same word length when `SequenceMatcher` similarity >= 0.9
+(`DEFAULT_REPAIR_SIMILARITY`), taking the passage in the source's own words; a
+one-letter change in a normal-length quote clears 0.9, which is the step's
+done-when, and no model is involved. `repair_citations` closes a citation with a
+missing/doubled bracket (`[[id]`, `[id]]`, `[id]`).
+
+### D7.3 A trailing citation belongs to its fact
+
+A citation is written after the fact it supports, so the sentence splitter keeps
+a marker (and its quote) that follows a full stop with the sentence it closes,
+then resumes at a new sentence. Quotes, decimal/version dots, single-letter
+initials, abbreviations and dots inside a URL/identifier never end a sentence.
+Headings and the lines under the fixed "Not in company records" heading are
+labelled `heading`/`gap` and need no citation; the gap lines become `missing`.
+The same bracket rule applies to the split: dots inside `[[...]]` never split.
+
+### D7.4 Failure kinds, and leaked reasoning means meta-reasoning
+
+`check_draft` returns one `Problem` per failing sentence: `unknown_source`,
+`quote_missing` (only when quotes are required), `quote_not_in_source`,
+`no_citation`, `plain_source` (a `kind:id` written as text), `fake_link` (a
+markdown link or url that is not a cited source's url), `leaked_reasoning`,
+`live_claim` (a same-day word with no source dated the sync day). "Leaked
+reasoning" is the explicit meta-reasoning leakage 05 section 2.3 names
+("chain of thought", "as an AI", "let me think", ...); the softer inference
+words ("likely", "seems", ...) are left to the reviewer's R1/R2 (06), since the
+mechanical pass must not drop a sentence that quotes a record using them.
+
+### D7.5 Rendering, and hidden material fails the run
+
+Surviving sentences are rendered with their quotes stripped; references are
+numbered by first appearance, carry the record's own graph id as `nodeId` (so
+two chat messages differ), `type` mapped to 07's list (`connection` -> `role`,
+`team` -> `project`), and `freshness` from the evidence flag with the
+supersession note. If no fact sentence survives, the answer is the fixed
+`NO_ANSWER` message with no references; `status` is `verified` only when nothing
+was removed and nothing is missing, else `partly_verified`. Any citation whose
+ref the caller may not see raises `HiddenDataError` and fails the run (06, step
+2.4) rather than being silently dropped. `verification` imports no provider or
+loop module (a test asserts it in a fresh interpreter).
