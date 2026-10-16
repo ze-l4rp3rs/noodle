@@ -297,6 +297,12 @@ def split_sentences(text: str) -> list[str]:
     return out
 
 
+def number_sentences(sentences: Iterable[Sentence]) -> str:
+    """The numbered sentence list the reviewer is shown (05 section 3)."""
+
+    return "\n".join(f"{sentence.number}. {sentence.text}" for sentence in sentences)
+
+
 def split_draft(text: str, missing_heading: str = MISSING_HEADING) -> list[Sentence]:
     """Number the draft's sentences and label each heading, gap or fact."""
 
@@ -419,7 +425,9 @@ def check_draft(
                         f"the quote is not in source {citation.source_id}",
                     )
                 )
-        if _has_plain_source(sentence.text):
+        # Only the model's own prose is checked: a quoted source is verified
+        # verbatim above and may itself contain a ``kind:id``.
+        if _has_plain_source(_strip_quotes(sentence.text)):
             problems.append(
                 Problem(sentence.number, sentence.text, "plain_source", "a source is written as plain text, not a citation")
             )
@@ -562,23 +570,31 @@ def verify(
     quotes_required: bool = True,
     missing_heading: str = MISSING_HEADING,
     threshold: float = DEFAULT_REPAIR_SIMILARITY,
+    extra_problems: Iterable[Problem] = (),
 ) -> VerificationResult:
     """Repair, check and render a draft into the answer and its references.
 
     Unsupported sentences are removed and listed in ``unverified``; the gaps the
     answer states under the fixed heading become ``missing``. If nothing
     verifiable survives, the answer is the fixed message.
+
+    ``extra_problems`` carries the reviewer's verdicts (05 section 3) as
+    :class:`Problem`s keyed by sentence number; they remove the same sentences
+    and join ``unverified``, so removal has one home.
     """
 
     repaired = repair_quotes(repair_citations(draft), registry, threshold)
     sentences = split_draft(repaired, missing_heading=missing_heading)
-    problems = check_draft(
-        sentences,
-        registry,
-        forbidden_refs=forbidden_refs,
-        last_synced_at=last_synced_at,
-        quotes_required=quotes_required,
+    problems = list(
+        check_draft(
+            sentences,
+            registry,
+            forbidden_refs=forbidden_refs,
+            last_synced_at=last_synced_at,
+            quotes_required=quotes_required,
+        )
     )
+    problems.extend(extra_problems)
     bad = {problem.number for problem in problems}
     kept = [sentence for sentence in sentences if sentence.number not in bad]
 
@@ -617,6 +633,7 @@ __all__ = [
     "repair_quotes",
     "extract_citations",
     "split_sentences",
+    "number_sentences",
     "split_draft",
     "check_draft",
     "verify",

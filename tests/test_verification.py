@@ -208,6 +208,13 @@ def test_check_draft_flags_plain_source_and_fake_link():
     assert "fake_link" not in [p.kind for p in V.check_draft(legit, registry)]
 
 
+def test_a_quoted_source_with_an_id_is_not_a_plain_source():
+    registry = reg(ev(ref="doc:one", text="the owner of project:y is set"))
+    sid = registry.ids()[0]
+    sent = V.split_draft(f'The owner is set. [[{sid}]] "the owner of project:y is set"')
+    assert "plain_source" not in [p.kind for p in V.check_draft(sent, registry)]
+
+
 def test_check_draft_flags_leaked_reasoning():
     registry = reg(ev(ref="doc:one", text="body"))
     sid = registry.ids()[0]
@@ -318,6 +325,27 @@ def test_verify_falls_back_to_the_fixed_message_when_nothing_verifiable_remains(
     assert result.text == V.NO_ANSWER
     assert result.references == []
     assert result.status == "partly_verified"
+
+
+def test_verify_applies_reviewer_problems_keyed_by_number():
+    registry = reg(ev(ref="doc:one", text="body"))
+    sid = registry.ids()[0]
+    draft = f'Kept fact. [[{sid}]] "body" A rejected claim. [[{sid}]] "body"'
+    result = V.verify(
+        draft,
+        registry,
+        extra_problems=[V.Problem(2, "A rejected claim.", "reviewer_unsupported", "not stated")],
+    )
+    assert "A rejected claim." not in result.text
+    assert "Kept fact." in result.text
+    assert any(item["reason"] == "not stated" for item in result.unverified)
+    assert result.status == "partly_verified"
+
+
+def test_number_sentences_lists_the_numbered_draft():
+    sentences = V.split_draft("One. Two.")
+    numbered = V.number_sentences(sentences)
+    assert numbered.splitlines()[0].startswith("1. One.")
 
 
 def test_verify_raises_on_hidden_material():

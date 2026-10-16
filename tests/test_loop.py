@@ -208,6 +208,21 @@ def test_the_conversation_keeps_the_whole_tool_exchange():
     assert [m.role for m in res.messages] == ["user", "assistant", "tool", "assistant"]
 
 
+def test_the_model_is_shown_each_source_id_and_can_cite_it():
+    client = RecordingGraphClient(
+        (Q2, graph_result([{"person_id": "person:x", "name": "X", "rel": "OWNS", "entity": "project:y"}])),
+        (TWIN_ENTITY, hidden_result(0, [])),
+    )
+    provider = ScriptedProvider([tool("find_owner", {"ref": "project:y"}), Completion(text="X owns it.")])
+    res = run_tool_loop(provider, client, USER, "who owns it?")
+
+    shown = json.loads(_tool_messages(_second_messages(provider))[0].text)
+    source_id = shown["evidence"][0]["source_id"]
+    assert len(source_id) == 8
+    assert res.registry.has(source_id)
+    assert res.registry.get(source_id).ref == "role:OWNS:person:x:project:y"
+
+
 def test_a_tool_subset_can_be_offered():
     provider = ScriptedProvider([Completion(text="done")])
     run_tool_loop(provider, RecordingGraphClient(), USER, "hi", tools=["current_time"])

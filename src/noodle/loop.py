@@ -15,6 +15,10 @@ the loop guarantees:
 * reasoning the provider returns separately never enters the answer or the
   conversation (05 section 1).
 
+The evidence a tool returns is registered in the run's :class:`SourceRegistry`,
+and each evidence item the model is shown carries that record's run-random
+citation id, so the generator can cite ``[[id]]`` (05 section 1, 07).
+
 Hidden information is merged for the system's soft dead-end but never appears in
 the run-log records (06, A4).
 """
@@ -29,6 +33,7 @@ from typing import Any, Mapping, Optional, Sequence, Union
 from .graph import GraphClient
 from .providers import Completion, Message, Provider, ToolCall
 from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden
+from .sources import SourceRegistry
 from .tools import TOOLS, Evidence, Tool, ToolResult, tool_specs
 
 # 05 section 8: tool rounds per model call, then a forced no-tools answer.
@@ -67,6 +72,7 @@ class LoopResult:
     tool_rounds: int
     forced: bool
     messages: list[Message]
+    registry: SourceRegistry = field(default_factory=SourceRegistry)
 
 
 def _as_messages(messages: Union[str, Sequence[Message]]) -> list[Message]:
@@ -127,8 +133,17 @@ def _call_tool(
     return record, result
 
 
-def _tool_payload(result: ToolResult) -> str:
-    return json.dumps(result.to_payload(), default=str, ensure_ascii=False)
+def _shown_payload(result: ToolResult, registry: SourceRegistry) -> str:
+    """The tool result the model is shown, with each evidence item's run id.
+
+    Registering the evidence here means a citable source exists for every record
+    a tool returned, and the model sees the same ``[[id]]`` marker it must cite.
+    """
+
+    payload = result.to_payload()
+    for item, evidence in zip(payload.get("evidence") or [], result.evidence):
+        item["source_id"] = registry.add(evidence).id
+    return json.dumps(payload, default=str, ensure_ascii=False)
 
 
 def run_tool_loop(
@@ -143,9 +158,11 @@ def run_tool_loop(
     model: Optional[str] = None,
     max_tokens: int = 2000,
     temperature: float = 0.0,
+    registry: Optional[SourceRegistry] = None,
 ) -> LoopResult:
     """Run the generator with tools until it answers or the round limit forces one."""
 
+    registry = registry if registry is not None else SourceRegistry()
     available = _resolve_tools(tools)
     specs = tool_specs([tool.name for tool in available.values()]) or None
     conversation = _as_messages(messages)
@@ -196,7 +213,8 @@ def run_tool_loop(
                 )
                 records.append(record)
                 conversation.append(
-                    Message(role="tool", tool_call_id=call.id, name=call.name, text=_tool_payload(cached))
+                    Message(role="tool", tool_call_id=call.id, name=call.name,
+                            text=_shown_payload(cached, registry))
                 )
                 continue
 
@@ -208,7 +226,8 @@ def run_tool_loop(
                 traces.extend(result.trace)
                 hidden = merge_hidden(hidden, result.hidden)
                 conversation.append(
-                    Message(role="tool", tool_call_id=call.id, name=call.name, text=_tool_payload(result))
+                    Message(role="tool", tool_call_id=call.id, name=call.name,
+                            text=_shown_payload(result, registry))
                 )
             else:
                 conversation.append(
@@ -230,4 +249,5 @@ def run_tool_loop(
         tool_rounds=rounds,
         forced=forced,
         messages=conversation,
+        registry=registry,
     )

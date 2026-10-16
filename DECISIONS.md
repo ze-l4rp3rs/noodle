@@ -376,3 +376,74 @@ was removed and nothing is missing, else `partly_verified`. Any citation whose
 ref the caller may not see raises `HiddenDataError` and fails the run (06, step
 2.4) rather than being silently dropped. `verification` imports no provider or
 loop module (a test asserts it in a fresh interpreter).
+
+## Step 8 — reviewer and fix rounds
+
+### D8.1 The tool loop must show each source's run id
+
+Step 6's loop showed the model the evidence's record `ref`; step 7's citation
+format needs the run-random source id. The bridge belongs to this step, because
+the reviewer and fix rounds need a citable draft. `run_tool_loop` now takes an
+optional `SourceRegistry`, registers every evidence item a tool returns, and
+puts that item's `source_id` in the JSON the model is shown (the `ref` stays for
+the record identity). `LoopResult` carries the registry, so one registry spans
+all tool rounds and all fix rounds; the generator cites `[[source_id]]`. This
+keeps identity (the record's own id) and citation (the run id) separate, as 03
+and 07 require. `loop` importing `sources` creates no cycle (`sources` ->
+`tools`).
+
+### D8.2 The reviewer: separate call, no tools, tolerant verdict, strict default
+
+`reviewer.review` makes one provider call with `tools=None` and the R1 to R7
+instruction, showing the source block, the tool-call trace (tool, args, status,
+sources or error) and the draft's numbered sentences. The verdict is JSON; the
+parser scans for a balanced `{...}` object (strings respected), so prose around
+it is tolerated, and accepts string numbers/booleans. One retry is made when the
+reply is unusable; a verdict that judges no statement (`sentences` empty/missing)
+counts as unusable, not as approval. If the reviewer asks for a tool, the call
+returns `None` at once (no retry) and the draft is `not_checked` (05 section 3).
+Strictness: any factual sentence the reviewer did not explicitly mark supported
+becomes a `reviewer_unjudged` problem, and a rejected one carries the reviewer's
+reason as `reviewer_unsupported`. Headings and gap lines are not judged.
+
+### D8.3 Fix rounds continue the generator's conversation; removal has one home
+
+`pipeline.run_answer` runs the generator loop, checks and reviews a draft, and —
+while problems, unanswered parts or false premises remain and the budget is not
+spent — appends one user message with only the problems (with sentence numbers),
+the unanswered parts and the uncorrected premises, plus the instruction to copy
+every other statement word for word. The next loop starts from that same
+conversation, tool exchanges included, so history is intact (05 section 4).
+Reviewer verdicts become `Problem`s and are handed to `verification.verify` via a
+new `extra_problems` argument: mechanical and reviewer removals share one
+renderer, one `unverified` list and one `freshness` pass, so a sentence is never
+removed twice.
+
+### D8.4 Best draft, statuses and the missing list
+
+Drafts are scored `(reviewed_or_not, problem_sentences, unanswered + false
+premises)`; `min` keeps the earliest on a tie, so the best wins, not the latest
+(05 section 5). `rounds` is the number of drafts reviewed and `fix_rounds` the
+fix requests sent. Status: `not_checked` when the reviewer failed (or the run
+would time out, added in step 9), `partly_verified` when a sentence was removed,
+something is missing or a premise was corrected, else `verified`. `approved` is
+true only for a reviewed draft with no problem sentences, no unanswered parts and
+no false premises. `missing` is the rendered gap list plus the reviewer's
+`unanswered`. `false_premises` becomes `premise`.
+
+### D8.5 Instructions live in `prompts.py` until config carries them
+
+07 lists an `instructions` config group (generator, fix request, reviewer), but
+the config parser does not read it yet. The three instructions and the retry
+line are module constants in `prompts.py`; `run_answer`/`review` accept overrides
+so step 9 can wire config without touching this logic. None of the text contains
+a dataset name (check 6 passes).
+
+### D8.6 Plain-source detection ignores quoted source text
+
+`_has_plain_source` scanned the whole sentence, so a quote that legitimately
+contains a `kind:id` (common: a role sentence names its entity) was flagged
+`plain_source` and removed — a false positive that would break real runs. The
+check now scans `_strip_quotes(sentence.text)`: only the model's own prose, since
+the quoted source is already verified verbatim. A `kind:id` written as prose is
+still flagged; a quoted one is not.
