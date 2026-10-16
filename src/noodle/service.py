@@ -27,6 +27,7 @@ from .providers import (
 )
 from .queries import UserCtx
 from .response import build_response
+from .router import route as route_request
 from .sources import SourceRegistry
 from .tools import TOOLS
 
@@ -112,18 +113,21 @@ def answer(
     user: UserCtx,
     question: str,
     *,
-    mode: str = "fast",
+    mode: Optional[str] = None,
     context: Optional[str] = None,
 ) -> tuple[dict[str, Any], AnswerRun]:
     """Answer ``question`` for ``user``. Returns ``(response, run)``.
 
     Raises :class:`GraphDownError` before any model call when the graph is down.
+    The router picks the mode (an explicit ``mode`` wins, then keywords, then the
+    default) and detects live intent, which turns on the freshness guard (05, 06).
     """
 
     if not runtime.graph_up():
         raise GraphDownError("FalkorDB is unreachable")
 
-    mode_cfg = _mode(runtime, mode)
+    decision = route_request(question, explicit=mode)
+    mode_cfg = _mode(runtime, decision.mode)
     resolved_mode = mode_cfg.name if mode_cfg is not None else "fast"
     generator_model = (mode_cfg.generator_model if mode_cfg else "") or runtime.generator_model or None
     reviewer_model = (mode_cfg.reviewer_model if mode_cfg else "") or runtime.reviewer_model or None
@@ -146,6 +150,7 @@ def answer(
         max_tokens=runtime.settings.generation.max_tokens,
         temperature=runtime.settings.generation.temperature,
         registry=registry,
+        live_intent=decision.live_intent,
     )
     response = build_response(
         run,

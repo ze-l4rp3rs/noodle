@@ -75,8 +75,8 @@ def create_app(runtime: Runtime) -> FastAPI:
         context = body.get("context")
         if context is not None and not isinstance(context, str):
             return JSONResponse(status_code=400, content={"error": "field 'context' must be a string"})
-        mode = body.get("mode") or "fast"
-        if not isinstance(mode, str):
+        mode = body.get("mode")
+        if mode is not None and not isinstance(mode, str):
             return JSONResponse(status_code=400, content={"error": "field 'mode' must be a string"})
 
         user = _resolve_user(request, runtime)

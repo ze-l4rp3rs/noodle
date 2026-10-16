@@ -238,6 +238,15 @@ def test_check_draft_allows_a_same_day_claim_backed_by_a_same_day_source():
     assert "live_claim" not in [p.kind for p in probs]
 
 
+def test_check_draft_flags_a_same_day_claim_dated_after_the_sync():
+    # same calendar day, but the record postdates the sync time, so it is no proof
+    registry = reg(ev(ref="doc:one", text="The service restarted.", date="2026-10-15T09:00:00Z"))
+    sid = registry.ids()[0]
+    sent = V.split_draft(f'The service restarted today. [[{sid}]] "The service restarted."')
+    probs = V.check_draft(sent, registry, last_synced_at="2026-10-15T00:05:00Z")
+    assert "live_claim" in [p.kind for p in probs]
+
+
 def test_check_draft_raises_on_hidden_material():
     registry = reg(ev(ref="secret:doc", text="restricted words"))
     sid = registry.ids()[0]

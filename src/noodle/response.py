@@ -35,6 +35,9 @@ ACCESS_NOTICE_TEXT = (
 # 06: an empty or unresolvable owner falls back to this.
 ACCESS_FALLBACK_CONTACT = "your administrator"
 
+# 06: the fixed as-of line the system appends for a live-intent question (D2).
+AS_OF_TEXT = "My data is current as of {as_of}. I can't see updates after that."
+
 FRESHNESS_CYPHER_MARKER = "meta:sync"
 
 
@@ -110,12 +113,20 @@ def build_response(
     mode: str,
     generator_model: Optional[str] = None,
     reviewer_model: Optional[str] = None,
-    live_intent: bool = False,
 ) -> dict[str, Any]:
-    """The 07 response object for one completed run."""
+    """The 07 response object for one completed run.
+
+    When the question was live-intent, the fixed as-of line is appended to the
+    answer by the system, not the model (05 section 5, 06, D2).
+    """
+
+    as_of = run.as_of or _as_of(run)
+    answer = run.answer
+    if run.live_intent and as_of:
+        answer = f"{answer}\n\n{AS_OF_TEXT.format(as_of=as_of)}"
 
     return {
-        "answer": run.answer,
+        "answer": answer,
         "references": [reference.to_dict() for reference in run.references],
         "status": run.status,
         "unverified": [dict(item) for item in run.unverified],
@@ -123,7 +134,7 @@ def build_response(
         "premise": list(run.premise),
         "proposed_actions": _proposed_actions(run),
         "access_notices": _access_notices(run),
-        "freshness": {"as_of": _as_of(run), "live_intent": bool(live_intent)},
+        "freshness": {"as_of": as_of, "live_intent": bool(run.live_intent)},
         "graph_trace": _graph_trace(run),
         "metadata": {
             "rounds": run.rounds,
@@ -173,6 +184,7 @@ def stream_events(response: dict[str, Any], run: AnswerRun, *, mode: str) -> Ite
 __all__ = [
     "ACCESS_NOTICE_TEXT",
     "ACCESS_FALLBACK_CONTACT",
+    "AS_OF_TEXT",
     "build_response",
     "sse_event",
     "stream_events",

@@ -374,6 +374,25 @@ def _has_live_claim(text: str) -> bool:
     return any(marker in low for marker in _LIVE_MARKERS)
 
 
+def _record_precedes_sync(record_date: Optional[str], last_synced_at: Optional[str]) -> bool:
+    """Is ``record_date`` the same calendar day as the sync, and no later than it?
+
+    05 step 2.5: a same-day claim stands only when a record dated that day exists
+    *and* precedes ``last_synced_at``. A date-only record counts as the start of
+    its day; when both carry a time the ISO-8601 strings order, so they compare
+    directly.
+    """
+
+    if not record_date or not last_synced_at:
+        return False
+    record, sync = str(record_date), str(last_synced_at)
+    if record[:10] != sync[:10]:
+        return False
+    if len(record) > 10 and len(sync) > 10:
+        return record <= sync
+    return True
+
+
 def check_draft(
     sentences: Iterable[Sentence],
     registry: SourceRegistry,
@@ -436,11 +455,11 @@ def check_draft(
         if _has_leaked_reasoning(sentence.text):
             problems.append(Problem(sentence.number, sentence.text, "leaked_reasoning", "the sentence contains reasoning text"))
         if last_synced_at and _has_live_claim(sentence.text):
-            day = str(last_synced_at)[:10]
-            same_day = any(
-                source.evidence.date and str(source.evidence.date)[:10] == day for source in cited_sources
+            backed = any(
+                _record_precedes_sync(source.evidence.date, last_synced_at)
+                for source in cited_sources
             )
-            if not same_day:
+            if not backed:
                 problems.append(
                     Problem(sentence.number, sentence.text, "live_claim", "the sentence claims a same-day event with no same-day source")
                 )

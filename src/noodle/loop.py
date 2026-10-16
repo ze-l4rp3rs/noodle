@@ -99,10 +99,11 @@ def _cache_key(call: ToolCall) -> tuple[str, str]:
     return (call.name, json.dumps(dict(call.arguments), sort_keys=True, default=str))
 
 
-def _redacted_query(trace: QueryResult) -> dict[str, Any]:
+def redacted_query(trace: QueryResult) -> dict[str, Any]:
     """One graph_trace entry (07): the exact Cypher, its redacted params and the
     ids/row count it produced. Params are already redacted in the queries layer
-    (A4); hidden counts never appear here (A4)."""
+    (A4); hidden counts never appear here (A4).
+    """
 
     return {
         "cypher": trace.cypher,
@@ -149,7 +150,7 @@ def _call_tool(
         node_ids=[nid for trace in result.trace for nid in trace.node_ids],
         edge_ids=[eid for trace in result.trace for eid in trace.edge_ids],
         duration_ms=(time.perf_counter() - started) * 1000,
-        queries=[_redacted_query(trace) for trace in result.trace],
+        queries=[redacted_query(trace) for trace in result.trace],
     )
     return record, result
 
@@ -231,7 +232,7 @@ def run_tool_loop(
                 record = ToolCallRecord(
                     call.name, dict(call.arguments), "reused", reused=True,
                     rows=len(cached.evidence), sources=[e.ref for e in cached.evidence],
-                    queries=[_redacted_query(trace) for trace in cached.trace],
+                    queries=[redacted_query(trace) for trace in cached.trace],
                 )
                 records.append(record)
                 conversation.append(

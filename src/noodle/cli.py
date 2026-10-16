@@ -20,7 +20,7 @@ def cli_answer(
     user: UserCtx,
     question: str,
     *,
-    mode: str = "fast",
+    mode: Optional[str] = None,
     context: Optional[str] = None,
 ) -> dict[str, Any]:
     """The CLI's answer: the same call ``/ask`` makes."""
@@ -34,7 +34,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("question", help="the question to answer")
     parser.add_argument("--user", default="person:local", help="the caller identity (dev only)")
     parser.add_argument("--clearance", type=int, default=None, help="override the caller's clearance")
-    parser.add_argument("--mode", default="fast", choices=["fast", "heavy"])
+    parser.add_argument(
+        "--mode",
+        default=None,
+        choices=["fast", "heavy"],
+        help="force a mode; omitted, the router decides (05 section 0)",
+    )
     parser.add_argument("--context", default=None, help="extra context for the question")
     return parser
 

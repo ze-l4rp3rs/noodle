@@ -28,10 +28,10 @@ from typing import Optional, Sequence
 
 from .config import DEFAULT_FIX_ROUNDS
 from .graph import GraphClient
-from .loop import DEFAULT_MAX_TOOL_ROUNDS, ToolCallRecord, ToolSet, run_tool_loop
+from .loop import DEFAULT_MAX_TOOL_ROUNDS, ToolCallRecord, ToolSet, redacted_query, run_tool_loop
 from .prompts import FIX_INSTRUCTION, GENERATOR_INSTRUCTION
 from .providers import Completion, Message, Provider
-from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden
+from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden, q12_freshness
 from .reviewer import Review, review, reviewer_problems
 from .sources import SourceRegistry
 from .tools import TOOLS, Evidence
@@ -84,6 +84,8 @@ class AnswerRun:
     registry: SourceRegistry
     forced: bool
     elapsed_ms: float
+    live_intent: bool = False
+    as_of: str = ""
 
 
 def build_fix_request(
@@ -179,6 +181,7 @@ def run_answer(
     threshold: float = DEFAULT_REPAIR_SIMILARITY,
     quotes_required: bool = True,
     registry: Optional[SourceRegistry] = None,
+    live_intent: bool = False,
 ) -> AnswerRun:
     """Answer ``question`` for ``user``, reviewing and fixing until clean or out of rounds."""
 
@@ -198,6 +201,33 @@ def run_answer(
     forced = False
     fix_rounds_used = 0
     messages = list(conversation)
+
+    # 06: a live-intent question forces the freshness guard, and the as-of time is
+    # read from the graph, never the clock at answer time (D1). The system runs
+    # the lookup itself, so the guard holds even if the model forgets to.
+    as_of = ""
+    if live_intent:
+        if last_synced_at is None:
+            started_fresh = time.perf_counter()
+            freshness = q12_freshness(client, user)
+            traces.append(freshness)
+            tool_calls.append(
+                ToolCallRecord(
+                    "get_freshness",
+                    {},
+                    "ok",
+                    rows=len(freshness.rows),
+                    node_ids=list(freshness.node_ids),
+                    edge_ids=list(freshness.edge_ids),
+                    duration_ms=(time.perf_counter() - started_fresh) * 1000,
+                    queries=[redacted_query(freshness)],
+                )
+            )
+            if freshness.rows:
+                value = freshness.rows[0].get("last_synced_at")
+                last_synced_at = str(value) if value else None
+        if last_synced_at:
+            as_of = str(last_synced_at)
 
     for cycle in range(fix_rounds + 1):
         result = run_tool_loop(
@@ -310,6 +340,8 @@ def run_answer(
         registry=registry,
         forced=forced,
         elapsed_ms=(time.perf_counter() - started) * 1000,
+        live_intent=live_intent,
+        as_of=as_of,
     )
 
 

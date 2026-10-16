@@ -524,3 +524,70 @@ provider name to its adapter (anthropic / google / openai / groq), reading the k
 from the entry's `key_env` at call time; the key is never stored in config (07).
 It is used by `service.build_runtime`, keeping tests free to inject a
 `ScriptedProvider` and never construct a real client.
+
+## Step 10 - Router and freshness guard
+
+### D10.1 The router is deterministic code; the classifier is an injectable hook
+
+05 section 0 allows a one-shot fast-model classification for ambiguous questions.
+`noodle.router` implements the whole decision in code — explicit mode, then
+keyword rules, then the default — and accepts optional `classifier` /
+`live_classifier` callables for the ambiguous case, but `service.answer` does not
+yet pass one, so today the decision is keyword-only. Wiring a real model
+classifier would add a model call on every ambiguous question (latency, and a
+second thing for the scripted tests to script) for a benefit the done-when does
+not require; the hook keeps the seam open. This is a deliberate deferral, not a
+missing path.
+
+### D10.2 An explicit mode wins; the API and CLI let the router decide
+
+`service.answer` now takes `mode=None` and routes: an explicit mode (from `POST
+/ask`'s `mode` field or `--mode`) is used verbatim, otherwise the router picks.
+`api.py` and `cli.py` default to `None` (auto) rather than `"fast"`, so a
+"what happened today" question and a "draft an update" question reach the right
+mode without the caller knowing the rules. The dev CLI `--mode` is optional and
+still `choices=["fast","heavy"]`.
+
+### D10.3 Live intent is a keyword set with word boundaries
+
+`LIVE_INTENT_KEYWORDS` ("today", "now", "right now", "latest", "currently",
+"this morning", "just", "breaking", "this hour", "status update") are matched
+with `\b` word boundaries so "now" never fires inside "know" and "just" never
+inside "justice". `HEAVY_KEYWORDS` ("draft", "write", "compose", "update the",
+"plan", "summarise all") route to heavy the same way. A classifier hook exists
+for the ambiguous case (D10.1).
+
+### D10.4 The freshness guard is system-owned
+
+When `live_intent` is on, `run_answer` itself runs `q12_freshness` before the
+tool loop (only if the caller has not already supplied `last_synced_at`), reads
+`last_synced_at` from the returned row, and records the lookup as a synthetic
+`ToolCallRecord(tool="get_freshness")` so it shows in `graph_trace` exactly as an
+agent-made tool call would. The as-of value therefore comes from the graph, never
+from the clock at answer time (D1), and the guard holds even if the model never
+thinks to ask. The pipeline owns the fact, the model only writes prose.
+
+### D10.5 The as-of line is fixed system text, appended after review
+
+`response.AS_OF_TEXT` is appended by `build_response` (not the model) for a
+live-intent run with a resolved `as_of`: "My data is current as of {as_of}. I
+can't see updates after that." `live_intent` and `as_of` are carried on
+`AnswerRun` so the response builder does not need them threaded back in from the
+service, and the wording is single-sourced. `freshness.live_intent` and
+`freshness.as_of` are set from the run.
+
+### D10.6 The live-claim check requires the record to precede the sync time
+
+06 flags a same-day claim as suspect. `verification._record_precedes_sync` treats
+a record as safe only when it is the same calendar day **and** not after the sync
+time (both timestamps carry a time-of-day), so a claim dated `2026-10-15T09:00Z`
+against a `2026-10-15T00:05Z` sync is flagged, while a date-only string (no time
+to compare) is left alone. The check now uses each memory's own record date, not
+the sync date itself.
+
+### D10.7 Live-intent keywords live in code, not the config group yet
+
+07 sketches a `freshness` config group for live-intent words. Keeping the words
+in `router.py` keeps the unit tests exhaustive without a config fixture, and the
+group has no other consumer yet; moving them to config is cheap later and can
+ride with the config work that adds the classifier (D10.1).
