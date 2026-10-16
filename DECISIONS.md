@@ -253,3 +253,62 @@ Q8 now filters with `NOT d.current`, which holds on both encodings, and the
 main graph was rebuilt (`GRAPH.DELETE` + bootstrap). Ingestion fingerprints
 are Python-side strings, so they cannot detect this encoding damage — a
 re-ingest reports "unchanged" either way.
+
+## Step 6 — provider interface and tool loop
+
+### D6.1 One interface, one service call; the loop runs the tools
+
+`Provider.complete(messages, *, tools, system, model, max_tokens, temperature)`
+makes exactly one request and returns a `Completion` (text, tool calls, model,
+stop reason, usage, and separately `reasoning`). Running tools stays in
+`noodle.loop`. Every adapter shares one neutral message shape
+(`Message(role=user|assistant|tool, text, tool_calls, tool_call_id, name)`) and
+converts it to its own wire format.
+
+Reasoning the model returns separately is parsed into `Completion.reasoning`
+and never enters the answer text or the conversation (05 section 1). Wiring a
+provider's own reasoning budget (Anthropic extended thinking) is left for the
+API step; the field is already carried and dropped.
+
+### D6.2 Retries, output-cap reduction and provider selection
+
+A short rate limit (`RateLimited`) is retried up to `max_retries`; a per-minute
+output cap (`OutputCapExceeded`) halves a remembered `cap_scale` (floor 0.25)
+and retries, so later calls start from the reduced cap. Each adapter's transport
+wraps SDK exceptions and translates 429/overloaded text into `RateLimited` and
+output-token-quota text into `OutputCapExceeded`; anything else is re-raised.
+A test drives translation and retry through the injected transport.
+
+Selection (`select_provider`) follows 05: one key use it; several keys and a
+terminal ask; several keys and no terminal use the configured default; none
+fails listing the options. A provider entry's `key_env` must match an env-var
+name pattern, so pasting the actual key is rejected as a config error (07).
+
+### D6.3 The bounded loop: reported failures, reuse, a forced final answer
+
+A tool round is one model call that requests tools. The loop's guarantees:
+text written alongside a tool request is discarded; an unknown tool, malformed
+arguments and a tool failure are reported back to the model as a tool message
+and never become a source (04); an identical call (same tool, same arguments) is
+answered from the first result and marked `reused`, so the graph is touched
+once; after `max_tool_rounds` (6, 05 section 8) the next call is made with no
+tools at all and `forced` is set. `LoopResult` carries the draft, every
+completion, the evidence, the merged hidden twin, the traces and a
+`ToolCallRecord` per call (tool, args, status, error, rows, sources, node ids,
+edge ids, duration, reused) — the 05 section 7 run log, with hidden content
+never in a record (A4).
+
+### D6.4 Config grows providers, modes and generation (07)
+
+`noodle.yaml` now carries `providers` (default + per provider key env var and
+generator/reviewer model), `modes` (fast/heavy: models, tool set, tool rounds,
+fix rounds, timeout) and `generation` (max tokens, temperature). All three are
+optional with defaults, so earlier configs still load. `Settings` exposes typed,
+read-only views; the router (step 10) consumes `modes`.
+
+### D6.5 Provider libraries are optional extras, imported lazily
+
+`anthropic`, `google-generativeai` and `openai` are optional extras and are
+imported only inside a default transport, so importing `noodle.providers` never
+pulls in a library for an unused provider; a test asserts none is imported.
+Unit tests never call a real model: adapters run through injected transports.

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Callable, Iterable, Mapping, Optional
 
 from .graph import GraphClient
 from .queries import (
@@ -587,12 +587,20 @@ _TOOL_TABLE = (
 TOOLS: dict[str, Tool] = {tool.name: tool for tool in _TOOL_TABLE}
 
 
-def tool_specs() -> list[dict[str, Any]]:
-    """The tool contracts shown to the model (never the user identity)."""
+def tool_specs(names: Optional[Iterable[str]] = None) -> list[dict[str, Any]]:
+    """The tool contracts shown to the model (never the user identity).
 
+    ``names`` restricts the set to those tools, in order; ``None`` is every
+    tool.
+    """
+
+    if names is None:
+        chosen = list(_TOOL_TABLE)
+    else:
+        chosen = [TOOLS[name] for name in names]
     return [
         {"name": tool.name, "description": tool.description, "parameters": tool.parameters}
-        for tool in _TOOL_TABLE
+        for tool in chosen
     ]
 
 

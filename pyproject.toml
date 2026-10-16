@@ -17,6 +17,9 @@ api = [
     "fastapi>=0.110",
     "uvicorn>=0.27",
 ]
+anthropic = ["anthropic>=0.40"]
+google = ["google-generativeai>=0.8"]
+openai = ["openai>=1.40"]
 
 [build-system]
 requires = ["setuptools>=68"]

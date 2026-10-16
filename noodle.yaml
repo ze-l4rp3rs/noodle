@@ -15,3 +15,45 @@ api:
 
 logs:
   folder: ./runs
+
+# Providers: each names the environment variable that holds its key, never the
+# key. `default` is used when several keys are set and there is no terminal.
+providers:
+  default: anthropic
+  anthropic:
+    key_env: ANTHROPIC_API_KEY
+    generator_model: claude-sonnet-4-5
+    reviewer_model: claude-haiku-4-5
+  google:
+    key_env: GOOGLE_API_KEY
+    generator_model: gemini-2.5-flash
+    reviewer_model: gemini-2.5-flash
+  openai:
+    key_env: OPENAI_API_KEY
+    generator_model: gpt-4.1-mini
+    reviewer_model: gpt-4.1-mini
+
+# One loop, two configs (05 section 0). Fast exposes read-only tools; heavy adds
+# draft_followup. Budgets from 05 section 8.
+modes:
+  fast:
+    generator_model: claude-haiku-4-5
+    reviewer_model: claude-haiku-4-5
+    tools: [search_records, find_owner, find_experts, trace_decision, get_timeline,
+            find_conflicts, connect_entities, team_impact, get_freshness, current_time]
+    tool_rounds: 6
+    fix_rounds: 2
+    timeout_s: 45
+  heavy:
+    generator_model: claude-sonnet-4-5
+    reviewer_model: claude-haiku-4-5
+    tools: [search_records, find_owner, find_experts, trace_decision, get_timeline,
+            find_conflicts, connect_entities, team_impact, get_freshness, draft_followup,
+            current_time]
+    tool_rounds: 6
+    fix_rounds: 2
+    timeout_s: 90
+
+generation:
+  max_tokens: 2000
+  temperature: 0
