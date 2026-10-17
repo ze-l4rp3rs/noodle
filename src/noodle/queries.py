@@ -584,6 +584,50 @@ def q11_blast_radius(
 
 
 # --------------------------------------------------------------------------- #
+# Q15 subgraph (visualisation only; every node on the path must be visible)
+# --------------------------------------------------------------------------- #
+
+
+def q15_subgraph(
+    client: GraphClient, user: UserCtx, ids: Sequence[str], *, depth: int = 1
+) -> QueryResult:
+    """Nodes and edges around the given ids, for the UI graph (07, C6).
+
+    Every returned node is checked against ``$clr`` and every node on an expanded
+    path is visible, so an edge with a hidden endpoint is never returned (A2).
+    ``depth`` is a validated integer interpolated into the variable-length
+    pattern, exactly as Q9 does; no label or relationship type is interpolated.
+    There is no hidden twin: the visualisation simply omits what the caller may
+    not see.
+    """
+
+    ordered = [str(i) for i in ids]
+    hops = max(1, min(int(depth), 3))
+    cypher = (
+        "MATCH (s) WHERE s.id IN $ids AND s.clearance <= $clr "
+        "OPTIONAL MATCH p = (s)-[*1.." + str(hops) + "]-(m) "
+        "WHERE p IS NULL OR ALL(x IN nodes(p) WHERE x.clearance <= $clr) "
+        "RETURN {id: s.id, label: head(labels(s)), "
+        "name: coalesce(s.name, s.title, s.key, s.channel, s.id)} AS seed, "
+        "[x IN nodes(p) | {id: x.id, label: head(labels(x)), "
+        "name: coalesce(x.name, x.title, x.key, x.channel, x.id)}] AS nodes, "
+        "[x IN nodes(p) | x.id] AS node_ids, "
+        "[e IN relationships(p) | type(e)] AS rels"
+    )
+    params = user.params(ids=ordered)
+    res = client.ro_query(cypher, params)
+    edge_ids: list[str] = []
+    for row in res.rows:
+        node_ids = row.get("node_ids") or []
+        rels = row.get("rels") or []
+        edge_ids.extend(
+            f"{node_ids[i]}|{rels[i]}|{node_ids[i + 1]}"
+            for i in range(min(len(rels), len(node_ids) - 1))
+        )
+    return _result(res, params, HiddenInfo(), edge_ids=edge_ids)
+
+
+# --------------------------------------------------------------------------- #
 # Q12 freshness (allow-listed: no user clearance filter by design)
 # --------------------------------------------------------------------------- #
 
@@ -640,6 +684,27 @@ def q14_people(client: GraphClient) -> QueryResult:
     params: dict[str, Any] = {}
     res = client.ro_query(cypher, params)
     return _result(res, params, HiddenInfo())
+
+
+def resolve_access_owner_names(client: GraphClient, hidden: HiddenInfo) -> dict[str, str]:
+    """Resolve each access owner id to a display name for the fixed notice (06).
+
+    The notice names the person who can grant access; an owner we cannot resolve
+    is left out, and the caller falls back to the fixed "your administrator"
+    text. A lookup failure never changes an answer. The lookup uses the
+    allow-listed ``q14_person`` (identity/directory only), so it cannot leak
+    record content.
+    """
+
+    names: dict[str, str] = {}
+    for owner in hidden.access_owners:
+        try:
+            rows = q14_person(client, owner).rows
+        except Exception:  # noqa: BLE001 - a failed name lookup is not fatal
+            continue
+        if rows and rows[0].get("name"):
+            names[owner] = str(rows[0]["name"])
+    return names
 
 
 # --------------------------------------------------------------------------- #
@@ -748,6 +813,7 @@ QUERY_DOCS: tuple[QueryDoc, ...] = (
     QueryDoc("Q10", "Team impact", "Projects at risk if a team loses people.", "q10_team_impact", ("team", "lost"), "hidden_twin_team"),
     QueryDoc("Q11", "Blast radius", "Projects affected by a decision (BFS over AFFECTS).", "q11_blast_radius", ("ref", "depth"), "hidden_twin_entity"),
     QueryDoc("Q12", "Freshness", "The dataset's as-of time.", "q12_freshness", (), None),
+    QueryDoc("Q15", "Subgraph", "Nodes and edges around ids, visible to the caller only.", "q15_subgraph", ("ids", "depth"), None),
     QueryDoc("Q13", "Hidden twin", "Count and access owners of what RBAC filtered.", "hidden_twin_entity", ("ref",), None),
 )
 
@@ -802,6 +868,8 @@ __all__ = [
     "q12_freshness",
     "q14_person",
     "q14_people",
+    "q15_subgraph",
+    "resolve_access_owner_names",
     "hidden_twin_search",
     "hidden_twin_entity",
     "hidden_twin_sources",

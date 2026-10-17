@@ -666,3 +666,52 @@ full answer (no notice, the restricted title present), and the two `graph_trace`
 `node_ids` sets differ — the intern's visible graph never contains the VP-only
 node. This is the step's primary done-when.
 
+
+## Step 12 - Copilot and actions
+
+### D12.1 Context is entity-type aware, using the mapped queries
+
+`/copilot/context` runs the documented queries that apply to each node (07
+parenthetical lists Q2, Q4, Q5, Q8, Q10). The implementation calls `q2_owners`
+for every entity, `q4_decision_trace`, `q5_currency`, `q4_decision_chain` and
+`q11_blast_radius` for decision nodes, `q10_team_impact` for team nodes, and
+`q8_stale_documents` for all nodes but filters the stale list to the selected
+entity when the entity is a decision (only documents whose `superseded_decisions`
+contain it) or a document (that document only); for all other kinds it returns
+all visible stale documents (all $clr-filtered rows). The response always
+includes `owners`, `decisions`, `documents`, `dependencies`, `stale_warnings`,
+`hidden` and `access_notices`. The soft-dead-end notice is built through the
+shared `response.access_notices` (so the system text never changes), with owner
+display names resolved via `q14_person` through `queries.resolve_access_owner_names`.
+
+### D12.2 Copilot draft runs heavy mode and the pipeline already cites/flags
+
+`/copilot/draft` composes a question from `entity_id`, `instruction` and optional
+`draft_text` and passes `mode="heavy"` to the shared `answer()` service. The
+result is returned with the same 07 response shape as `/ask`. Citation-or-flagging
+is enforced by the pipeline and verification (uncited factual sentences are
+removed and listed in `unverified`), and `draft_followup` produces only proposed
+actions with `requires_confirmation` true, never sent (E6). Heavy mode exposes
+`draft_followup` (per noodle.yaml), so the model can propose drafts but cannot
+execute a send.
+
+### D12.3 Subgraph query added for visualisation and C6
+
+The visualisation surface in 07 includes `GET /graph/subgraph?ids=a,b,c&depth=1`.
+Since no Q1-Q13 covers it and C6 requires no hidden data in `/graph/subgraph`,
+we added `q15_subgraph` to the query library. It filters seeds with `$clr`,
+expands by a variable-length path `-[*1..depth]-` but only where every node on
+the path is visible (A2), returns deduplicated nodes and edges (constructed from
+the path order), and never produces a hidden twin (hidden nodes are simply
+omitted). The API formats these into `{nodes, edges}` and guards with the same
+graph-up and identity rules as `/ask`. `q15_subgraph` is documented in the
+generated `queries.md` alongside Q1-Q13 and the existing Q14.
+
+### D12.4 Shared owner-name resolution avoids duplication
+
+`queries.resolve_access_owner_names` centralises the name lookup for access
+owners using the allow-listed `q14_person` and catches lookup failures (graceful
+fallback to "your administrator"). `pipeline` and `copilot` both use it, and
+`response.access_notices` is the single builder shared across `/ask` and
+`/copilot/context`. These are pure refactors to keep the notice text and the
+fallback behaviour consistent (06, D11.3).

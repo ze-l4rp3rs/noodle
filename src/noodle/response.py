@@ -24,9 +24,10 @@ No company, person or record name appears in this module.
 from __future__ import annotations
 
 import json
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator, Mapping, Optional
 
 from .pipeline import AnswerRun
+from .queries import HiddenInfo
 
 ACCESS_NOTICE_TEXT = (
     "There is relevant material above your access level. "
@@ -41,6 +42,22 @@ AS_OF_TEXT = "My data is current as of {as_of}. I can't see updates after that."
 FRESHNESS_CYPHER_MARKER = "meta:sync"
 
 
+def access_notices(hidden: HiddenInfo, owner_names: Mapping[str, str]) -> list[dict[str, str]]:
+    """The fixed soft dead-end notice for a hidden result (06).
+
+    One builder, shared by ``/ask`` and ``/copilot/context``: it names the person
+    who can grant access (resolved to a display name by the caller) or the fixed
+    fallback, and ``contact`` stays the access owner's person id. Neither field
+    ever carries a hidden node's title, id, type or count.
+    """
+
+    if not hidden.hidden:
+        return []
+    owner = hidden.access_owners[0] if hidden.access_owners else ""
+    contact = owner_names.get(owner, "") or ACCESS_FALLBACK_CONTACT
+    return [{"text": ACCESS_NOTICE_TEXT.format(contact=contact), "contact": owner}]
+
+
 def _access_notices(run: AnswerRun) -> list[dict[str, str]]:
     """The fixed soft dead-end notice (06), appended by the system, not the model.
 
@@ -49,11 +66,7 @@ def _access_notices(run: AnswerRun) -> list[dict[str, str]]:
     person id. Neither field ever carries a hidden node's title, id or type.
     """
 
-    if not run.hidden.hidden:
-        return []
-    owner = run.hidden.access_owners[0] if run.hidden.access_owners else ""
-    contact = run.access_owner_names.get(owner, "") or ACCESS_FALLBACK_CONTACT
-    return [{"text": ACCESS_NOTICE_TEXT.format(contact=contact), "contact": owner}]
+    return access_notices(run.hidden, run.access_owner_names)
 
 
 def _graph_trace(run: AnswerRun) -> list[dict[str, Any]]:
@@ -191,6 +204,7 @@ __all__ = [
     "ACCESS_NOTICE_TEXT",
     "ACCESS_FALLBACK_CONTACT",
     "AS_OF_TEXT",
+    "access_notices",
     "build_response",
     "sse_event",
     "stream_events",

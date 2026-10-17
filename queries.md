@@ -396,6 +396,52 @@ def q12_freshness(client: GraphClient, user: UserCtx) -> QueryResult:
     return _result(res, params, HiddenInfo())
 ```
 
+## Q15 Subgraph
+
+Nodes and edges around ids, visible to the caller only.
+
+Params: `ids`, `depth`
+
+```python
+def q15_subgraph(
+    client: GraphClient, user: UserCtx, ids: Sequence[str], *, depth: int = 1
+) -> QueryResult:
+    """Nodes and edges around the given ids, for the UI graph (07, C6).
+
+    Every returned node is checked against ``$clr`` and every node on an expanded
+    path is visible, so an edge with a hidden endpoint is never returned (A2).
+    ``depth`` is a validated integer interpolated into the variable-length
+    pattern, exactly as Q9 does; no label or relationship type is interpolated.
+    There is no hidden twin: the visualisation simply omits what the caller may
+    not see.
+    """
+
+    ordered = [str(i) for i in ids]
+    hops = max(1, min(int(depth), 3))
+    cypher = (
+        "MATCH (s) WHERE s.id IN $ids AND s.clearance <= $clr "
+        "OPTIONAL MATCH p = (s)-[*1.." + str(hops) + "]-(m) "
+        "WHERE p IS NULL OR ALL(x IN nodes(p) WHERE x.clearance <= $clr) "
+        "RETURN {id: s.id, label: head(labels(s)), "
+        "name: coalesce(s.name, s.title, s.key, s.channel, s.id)} AS seed, "
+        "[x IN nodes(p) | {id: x.id, label: head(labels(x)), "
+        "name: coalesce(x.name, x.title, x.key, x.channel, x.id)}] AS nodes, "
+        "[x IN nodes(p) | x.id] AS node_ids, "
+        "[e IN relationships(p) | type(e)] AS rels"
+    )
+    params = user.params(ids=ordered)
+    res = client.ro_query(cypher, params)
+    edge_ids: list[str] = []
+    for row in res.rows:
+        node_ids = row.get("node_ids") or []
+        rels = row.get("rels") or []
+        edge_ids.extend(
+            f"{node_ids[i]}|{rels[i]}|{node_ids[i + 1]}"
+            for i in range(min(len(rels), len(node_ids) - 1))
+        )
+    return _result(res, params, HiddenInfo(), edge_ids=edge_ids)
+```
+
 ## Q13 Hidden twin
 
 Count and access owners of what RBAC filtered.

@@ -31,7 +31,14 @@ from .graph import GraphClient
 from .loop import DEFAULT_MAX_TOOL_ROUNDS, ToolCallRecord, ToolSet, redacted_query, run_tool_loop
 from .prompts import FIX_INSTRUCTION, GENERATOR_INSTRUCTION
 from .providers import Completion, Message, Provider
-from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden, q12_freshness, q14_person
+from .queries import (
+    HiddenInfo,
+    QueryResult,
+    UserCtx,
+    merge_hidden,
+    q12_freshness,
+    resolve_access_owner_names,
+)
 from .reviewer import Review, review, reviewer_problems
 from .sources import SourceRegistry
 from .tools import TOOLS, Evidence
@@ -343,27 +350,8 @@ def run_answer(
         elapsed_ms=(time.perf_counter() - started) * 1000,
         live_intent=live_intent,
         as_of=as_of,
-        access_owner_names=_access_owner_names(client, hidden),
+        access_owner_names=resolve_access_owner_names(client, hidden),
     )
-
-
-def _access_owner_names(client: GraphClient, hidden: HiddenInfo) -> dict[str, str]:
-    """Resolve each access owner id to a display name for the fixed notice (06).
-
-    The notice names the person who can grant access; an owner we cannot resolve
-    is left out, and the response falls back to the fixed "your administrator"
-    text. A lookup failure never changes the answer.
-    """
-
-    names: dict[str, str] = {}
-    for owner in hidden.access_owners:
-        try:
-            rows = q14_person(client, owner).rows
-        except Exception:  # noqa: BLE001 - a failed name lookup is not fatal
-            continue
-        if rows and rows[0].get("name"):
-            names[owner] = str(rows[0]["name"])
-    return names
 
 
 __all__ = ["Draft", "AnswerRun", "build_fix_request", "run_answer"]
