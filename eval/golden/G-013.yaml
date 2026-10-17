@@ -1,0 +1,10 @@
+id: G-013
+areas: [connection]
+user: person:ines-abara
+question: "How is the Auth Migration related to the Identity Provider project?"
+context_file: null
+facts:
+  - {kind: relationship, src: project:auth-migration, type: DEPENDS_ON, dst: project:identity-provider}
+checks:
+  must_match: ["depend"]
+  must_cite: ["project:auth-migration", "project:identity-provider"]

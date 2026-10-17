@@ -118,6 +118,18 @@ else
   skip "queries.py arrives at step 4"
 fi
 
+echo "== 10. golden questions: offline fact check =="
+if [[ -d "$ROOT/eval/golden" ]]; then
+  if "$PYTHON" "$ROOT/scripts/run_eval.py" --offline >/dev/null 2>&1; then
+    pass "every golden fact confirmed against the dataset"
+  else
+    "$PYTHON" "$ROOT/scripts/run_eval.py" --offline | tail -5
+    fail "offline fact check"
+  fi
+else
+  skip "golden questions arrive at step 14"
+fi
+
 echo
 if [[ "$FAILED" -eq 0 ]]; then
   echo "check.sh: PASS"

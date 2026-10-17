@@ -1,0 +1,11 @@
+id: G-014
+areas: [connection, rbac]
+user: person:ines-abara
+question: "How are Iris Lund and Ken Zhao connected?"
+context_file: null
+facts:
+  - {kind: exists, id: person:iris-lund}
+  - {kind: exists, id: person:ken-zhao}
+  - {kind: clearance, id: team:black-projects, value: 3}
+checks:
+  must_not_leak: ["black", "Black Projects"]

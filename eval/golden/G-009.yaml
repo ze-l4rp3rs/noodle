@@ -1,0 +1,10 @@
+id: G-009
+areas: [false_premise]
+user: person:ines-abara
+question: "Which roles are we hiring for this quarter?"
+context_file: null
+facts:
+  - {kind: exists, id: decision:freeze-hiring}
+  - {kind: field, id: decision:freeze-hiring, field: title, value: "Hiring freeze through the quarter"}
+checks:
+  premise_corrected: "freeze"

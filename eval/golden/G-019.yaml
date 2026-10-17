@@ -1,0 +1,11 @@
+id: G-019
+areas: [action]
+user: person:ines-abara
+mode: heavy
+question: "Draft an update to the Auth Migration stakeholders."
+context_file: null
+facts:
+  - {kind: exists, id: project:auth-migration}
+  - {kind: relationship, src: decision:self-host-queue, type: AFFECTS, dst: project:auth-migration}
+checks:
+  must_cite: ["project:auth-migration"]

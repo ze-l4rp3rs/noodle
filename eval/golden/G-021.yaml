@@ -1,0 +1,11 @@
+id: G-021
+areas: [provenance, expertise]
+user: person:ines-abara
+question: "Who disagreed with self-hosting the queue, and what evidence did they give?"
+context_file: null
+facts:
+  - {kind: dissent, decision: decision:self-host-queue, person: person:dana-okoro}
+  - {kind: message, id: "chat:#platform-leads:2026-09-12T10:05:00Z", contains: "dissent"}
+checks:
+  must_match: ["Dana Okoro"]
+  must_cite: ["chat:#platform-leads:2026-09-12T10:05:00Z"]

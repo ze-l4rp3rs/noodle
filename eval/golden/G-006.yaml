@@ -1,0 +1,11 @@
+id: G-006
+areas: [currency]
+user: person:ines-abara
+question: "Is the managed queue decision still current?"
+context_file: null
+facts:
+  - {kind: relationship, src: decision:self-host-queue, type: SUPERSEDES, dst: decision:managed-queue}
+  - {kind: field, id: decision:self-host-queue, field: status, value: accepted}
+checks:
+  must_match: ["self-host"]
+  must_cite: ["decision:self-host-queue"]

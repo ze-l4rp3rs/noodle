@@ -1,0 +1,19 @@
+id: G-001
+areas: [currency, ownership, provenance, missing]
+user: person:ines-abara
+question: "What is the status of the auth migration?"
+context_file: null
+facts:
+  - {kind: latest_change, entity: project:auth-migration, field: target_end_date, new_value: "2026-10-01"}
+  - {kind: value_on, entity: project:auth-migration, field: target_end_date, as_of: "2026-09-01", value: "2026-08-15"}
+  - {kind: field, id: project:auth-migration, field: owner, value: person:priya-nair}
+  - {kind: latest_change, entity: ticket:PLAT-882, field: assignee, new_value: person:priya-nair}
+  - {kind: exists, id: doc:rfc-031-auth-migration}
+  - {kind: message, id: "chat:#platform-leads:2026-09-12T09:00:00Z", contains: "2026-10-01"}
+  - {kind: absent, text: "completion"}
+checks:
+  must_match: ["2026-10-01"]
+  must_not_match_first_sentence: ["in progress"]
+  gap_stated: ["completion"]
+  must_cite: ["chat:#platform-leads:2026-09-12T09:00:00Z"]
+  status: partly_verified

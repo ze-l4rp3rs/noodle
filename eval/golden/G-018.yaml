@@ -1,0 +1,9 @@
+id: G-018
+areas: [live]
+user: person:ines-abara
+question: "What changed today?"
+context_file: null
+facts:
+  - {kind: message, id: "chat:#platform-leads:2026-10-15T09:30:00Z", contains: "cutover"}
+checks:
+  must_match: ["2026-10-15"]

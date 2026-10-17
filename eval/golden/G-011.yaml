@@ -1,0 +1,12 @@
+id: G-011
+areas: [conflict]
+user: person:ines-abara
+question: "Are there conflicting decisions about the Search Rebuild project?"
+context_file: null
+facts:
+  - {kind: relationship, src: decision:search-elastic, type: CONTRADICTS, dst: decision:search-postgres}
+  - {kind: relationship, src: decision:search-elastic, type: AFFECTS, dst: project:search-rebuild}
+  - {kind: relationship, src: decision:search-postgres, type: AFFECTS, dst: project:search-rebuild}
+checks:
+  must_match: ["search"]
+  must_cite: ["decision:search-elastic", "decision:search-postgres"]

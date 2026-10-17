@@ -1,0 +1,10 @@
+id: G-010
+areas: [missing]
+user: person:ines-abara
+question: "What percentage of the Auth Migration is complete?"
+context_file: null
+facts:
+  - {kind: absent, text: "completion"}
+  - {kind: absent, text: "percent"}
+checks:
+  gap_stated: ["completion"]

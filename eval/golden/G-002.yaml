@@ -1,0 +1,11 @@
+id: G-002
+areas: [ownership]
+user: person:ines-abara
+question: "Who owns the Auth Migration project?"
+context_file: null
+facts:
+  - {kind: field, id: project:auth-migration, field: owner, value: person:priya-nair}
+  - {kind: exists, id: person:priya-nair}
+checks:
+  must_match: ["Priya Nair"]
+  must_cite: ["project:auth-migration"]

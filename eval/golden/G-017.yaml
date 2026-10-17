@@ -1,0 +1,11 @@
+id: G-017
+areas: [currency, rbac]
+user: person:victor-hale
+question: "Is the incumbent vendor decision still current?"
+context_file: null
+facts:
+  - {kind: relationship, src: decision:vendor-choice-override, type: SUPERSEDES, dst: decision:vendor-choice}
+  - {kind: clearance, id: decision:vendor-choice-override, value: 3}
+checks:
+  must_match: ["Override"]
+  must_cite: ["decision:vendor-choice-override"]

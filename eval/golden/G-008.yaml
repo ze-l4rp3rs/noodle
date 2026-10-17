@@ -1,0 +1,9 @@
+id: G-008
+areas: [timeline]
+user: person:ines-abara
+question: "What was the Auth Migration target date in August 2026?"
+context_file: null
+facts:
+  - {kind: value_on, entity: project:auth-migration, field: target_end_date, as_of: "2026-08-31", value: "2026-08-15"}
+checks:
+  must_match: ["2026-08-15"]

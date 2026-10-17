@@ -1,0 +1,11 @@
+id: G-012
+areas: [impact]
+user: person:ines-abara
+question: "What is at risk if the Reliability team loses people?"
+context_file: null
+facts:
+  - {kind: field, id: team:reliability, field: name, value: "Reliability"}
+  - {kind: field, id: team:reliability, field: lead, value: person:dana-okoro}
+  - {kind: blocked_have_owners, value: true}
+checks:
+  must_match: ["Reliability"]

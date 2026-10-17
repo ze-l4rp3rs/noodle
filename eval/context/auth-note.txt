@@ -1,0 +1,1 @@
+Auth migration note: the cutover is scheduled for the week of 2026-10-06.

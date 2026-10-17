@@ -1,0 +1,12 @@
+id: G-007
+areas: [stale]
+user: person:ines-abara
+question: "Which current documents rest on decisions that have been superseded?"
+context_file: null
+facts:
+  - {kind: relationship, src: decision:managed-queue, type: DOCUMENTED_IN, dst: doc:platform-strategy}
+  - {kind: relationship, src: decision:self-host-queue, type: SUPERSEDES, dst: decision:managed-queue}
+  - {kind: field, id: doc:platform-strategy, field: status, value: active}
+checks:
+  must_match: ["Platform strategy"]
+  must_cite: ["doc:platform-strategy"]

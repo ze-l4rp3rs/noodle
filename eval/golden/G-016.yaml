@@ -1,0 +1,10 @@
+id: G-016
+areas: [currency, rbac]
+user: person:ines-abara
+question: "Is the incumbent vendor decision still current?"
+context_file: null
+facts:
+  - {kind: relationship, src: decision:vendor-choice-override, type: SUPERSEDES, dst: decision:vendor-choice}
+  - {kind: clearance, id: decision:vendor-choice-override, value: 3}
+checks:
+  must_not_leak: ["vendor-choice-override", "replacement", "Override"]

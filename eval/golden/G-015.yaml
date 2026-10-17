@@ -1,0 +1,13 @@
+id: G-015
+areas: [connection, rbac]
+user: person:victor-hale
+question: "How are Iris Lund and Ken Zhao connected?"
+context_file: null
+facts:
+  - {kind: field, id: team:black-projects, field: name, value: "Black Projects"}
+  - {kind: clearance, id: team:black-projects, value: 3}
+  - {kind: exists, id: person:iris-lund}
+  - {kind: exists, id: person:ken-zhao}
+checks:
+  must_match: ["Black Projects"]
+  must_cite: ["team:black-projects"]

@@ -1,0 +1,12 @@
+id: G-005
+areas: [provenance]
+user: person:ines-abara
+question: "Why did we adopt the managed queue provider?"
+context_file: null
+facts:
+  - {kind: field, id: decision:managed-queue, field: key, value: "DEC-101"}
+  - {kind: approver, decision: decision:managed-queue, person: person:victor-hale}
+  - {kind: relationship, src: decision:managed-queue, type: DOCUMENTED_IN, dst: doc:queue-adr}
+checks:
+  must_match: ["managed"]
+  must_cite: ["decision:managed-queue"]

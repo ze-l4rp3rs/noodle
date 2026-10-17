@@ -1,0 +1,10 @@
+id: G-003
+areas: [ownership, expertise]
+user: person:ines-abara
+question: "Who should I ask about the internals of the legacy auth system?"
+context_file: null
+facts:
+  - {kind: field, id: doc:auth-internals-notes, field: author, value: person:noah-fenn}
+  - {kind: latest_change, entity: ticket:PLAT-882, field: assignee, new_value: person:priya-nair}
+checks:
+  must_match: ["Noah Fenn"]

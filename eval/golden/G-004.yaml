@@ -1,0 +1,10 @@
+id: G-004
+areas: [expertise, provenance]
+user: person:ines-abara
+question: "Who should I talk to about the queue decision?"
+context_file: null
+facts:
+  - {kind: approver, decision: decision:managed-queue, person: person:ada-wren}
+  - {kind: dissent, decision: decision:self-host-queue, person: person:dana-okoro}
+checks:
+  must_match: ["Ada Wren"]

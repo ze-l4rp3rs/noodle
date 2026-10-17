@@ -772,3 +772,53 @@ The rebase pulled `8d5db81` ("multi-format document extraction"), which left an
 unused `Optional` import in `extractor.py` and an unused `extract_bytes` import in
 `test_source_ingestion.py`; `ruff` (check.sh step 1) failed on them. Both were
 removed.
+
+## Step 14 - Evaluation
+
+### D14.1 Fact kinds are general and name-free
+
+The offline check knows twelve general fact kinds (09): `exists`, `field`,
+`clearance`, `latest_change`, `value_on`, `dissent`, `approver`, `message`,
+`relationship`, `document_after`, `absent` and `blocked_have_owners`. Each is a
+small predicate over the dataset dict, so no company, person or record name
+appears in `evaluation.py` and the check stays portable to another dataset.
+
+### D14.2 "Value on a date" reads the change's old value before the first change
+
+The dataset records only the change (old_value -> new_value) at its date, not a
+snapshot per day. `value_on` therefore returns the last change at or before the
+date, and, when the date precedes every change, the earliest change's
+`old_value` -- the value that was in force on that date. This is what makes the
+"target date in August 2026" fact (2026-08-15, before the 2026-09-12 change)
+checkable.
+
+### D14.3 Citations match on the reference's node id, not the source registry id
+
+A built reference carries both an ephemeral `id` (the source registry token) and
+`nodeId` (the record id), plus role references like
+`role:OWNS:person:x:project:y`. The scorer reads `nodeId` and matches `must_cite`
+by substring, so a golden check can name a record id and still be satisfied by a
+role reference that embeds it.
+
+### D14.4 The runner takes a user resolver and an answer function
+
+`run_questions` resolves each question's asker through an injected
+`user_resolver`, so an offline run reads clearance from the dataset
+(`resolve_dataset_user`) while the online script uses `auth.resolve_user` against
+the graph. `answer_fn` defaults to `service.answer`; tests inject a fake one or a
+scripted provider. This keeps the runner itself unit-testable without a database
+or a model (09).
+
+### D14.5 Vector-only baseline retrieval is token overlap, and ignores RBAC
+
+The baseline has no graph, no `current` flags and no RBAC: it scores each
+document by token overlap with the question and returns the best one. A document
+hidden from the asker is still returned, so the RBAC and currency questions fail
+for the baseline -- exactly the gap the demo shows. It reads only documents.
+
+### D14.6 The keyless offline check joins check.sh; the runner does not
+
+09 says the runner needs real keys and a loaded graph and is not part of
+`check.sh`. The offline fact check needs neither, so `check.sh` gained step 10
+(`scripts/run_eval.py --offline`) to enforce the step 14 done-when on every
+change. Scores are printed, never written to disk.
