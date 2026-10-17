@@ -13,13 +13,24 @@ Track: **Company Brain**.
 ## Local bring-up
 
 ```bash
-docker compose up -d falkordb      # FalkorDB with a health check
-scripts/up.sh                      # waits for health, runs ensure_schema()
-scripts/check.sh                   # compile, lint, unit suite, config guards
+scripts/db.sh up        # FalkorDB on localhost:6379, browser UI on http://localhost:3000
+scripts/db.sh ingest    # loads data/synthetic/dataset.json (or any folder/file)
+scripts/check.sh        # compile, lint, unit suite, config guards
+scripts/db.sh down      # clean exit (keeps data); `scripts/db.sh reset` also removes data
 ```
 
 FalkorDB is the product's graph database: there is no in-memory copy of the data
 and no cached answer served when it is down.
+
+### Ingestion
+
+Ingest either a structured dataset `.json` file or an entire folder of source files
+(including PDF, DOCX, XML, Markdown, and plain text extracted via `xberg`):
+
+```bash
+scripts/db.sh ingest [path/to/data]
+python scripts/ingest.py [path] --dry-run   # test reconciliation without writing
+```
 
 ## Layout
 

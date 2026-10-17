@@ -5,7 +5,8 @@ services:
     image: falkordb/falkordb:latest
     container_name: noodle-falkordb
     ports:
-      - "6379:6379"
+      - "127.0.0.1:${FALKORDB_PORT:-6379}:6379"
+      - "127.0.0.1:${FALKORDB_BROWSER_PORT:-3000}:3000"
     volumes:
       - falkordb_data:/var/lib/falkordb/data
     healthcheck:

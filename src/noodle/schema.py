@@ -147,6 +147,8 @@ NODE_PROPERTIES: dict[str, tuple[Property, ...]] = {
         Property("key_facts", KIND_LIST),
         Property("current", KIND_BOOL),
         Property("url"),
+        Property("location"),
+        Property("format"),
         Property("tags", KIND_LIST),
         Property("embedding", KIND_VECF32),
     ),

@@ -15,9 +15,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Iterable, Mapping, Optional, Sequence
+from pathlib import Path
+from typing import Any, Iterable, Mapping, Optional, Sequence, Union
 
 from . import dataset as dataset_module
 from . import schema
@@ -147,6 +149,28 @@ def _orient(record_id: str, target_id: str, reverse: bool) -> tuple[str, str]:
     return record_id, target_id
 
 
+def normalize_dataset(dataset: Mapping[str, Any]) -> dict[str, Any]:
+    """Normalize dataset to include sections and relationships, handling aliases and flat formats."""
+    if "sections" in dataset and isinstance(dataset["sections"], Mapping):
+        sections = dict(dataset["sections"])
+    else:
+        sections = {}
+        for key, value in dataset.items():
+            if key in ("metadata", "relationships") or str(key).startswith("_"):
+                continue
+            if isinstance(value, list):
+                sections[key] = value
+
+    if "slack_messages" in sections and "chat_messages" not in sections:
+        sections["chat_messages"] = sections["slack_messages"]
+
+    return {
+        "metadata": dict(dataset.get("metadata") or {}),
+        "sections": sections,
+        "relationships": dict(dataset.get("relationships") or {}),
+    }
+
+
 def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) -> Plan:
     """Turn a dataset into nodes and relationships, validating as it goes.
 
@@ -156,6 +180,7 @@ def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) 
     """
 
     written_at = written_at or _now_iso()
+    dataset = normalize_dataset(dataset)
     sections: Mapping[str, Any] = dataset["sections"]
 
     node_section: dict[str, str] = {}
@@ -163,6 +188,8 @@ def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) 
     props_by_id: dict[str, dict[str, Any]] = {}
     counts: dict[str, int] = {}
     for section, records in sections.items():
+        if section not in schema.ENTITY_LABELS:
+            continue
         label = schema.ENTITY_LABELS[section]
         counts[section] = len(records)
         for record in records:
@@ -198,6 +225,12 @@ def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) 
         for record in sections[ref.section]:
             rid = record["id"]
             value = record.get(ref.field)
+            if value is None:
+                # check aliases: e.g. owner_id, author_id, lead_id, approver_id, approver
+                for alias in (f"{ref.field}_id", ref.field.rstrip("s") + "_id", ref.field.rstrip("s")):
+                    if alias in record and record[alias] is not None:
+                        value = record[alias]
+                        break
             if value is None:
                 continue
             if ref.evidence:
@@ -604,6 +637,140 @@ def ingest_file(
     return ingest(dataset, writer=writer, reader=reader, touch=touch, **validate_flags)
 
 
+def sha256_file(path: Union[str, Path]) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as file:
+        for chunk in iter(lambda: file.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+MANIFEST_NAME = ".ingest_manifest.json"
+MANIFEST_VERSION = 1
+_IGNORED_PREFIXES = (".", "#", ".~lock")
+_IGNORED_SUFFIXES = (".manifest.json", ".pyc", ".tmp", ".bak", ".swp", "~")
+
+
+def _is_ignored(name: str) -> bool:
+    return any(name.startswith(p) for p in _IGNORED_PREFIXES) or any(
+        name.endswith(s) for s in _IGNORED_SUFFIXES
+    )
+
+
+def load_manifest(path: Union[str, Path]) -> dict[str, Any]:
+    p = Path(path)
+    if not p.is_file():
+        return {"version": MANIFEST_VERSION, "files": {}}
+    with open(p, encoding="utf-8") as file:
+        data = json.load(file)
+    data.setdefault("version", MANIFEST_VERSION)
+    data.setdefault("files", {})
+    return data
+
+
+def save_manifest(path: Union[str, Path], manifest: Mapping[str, Any]) -> None:
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(manifest, file, indent=2, ensure_ascii=False, sort_keys=True)
+        file.write("\n")
+
+
+def load_source_path(source: Union[str, Path]) -> dict[str, Any]:
+    """Load dataset from a single JSON/document file, or a folder of source files."""
+    path = Path(source)
+    if not path.exists():
+        raise IngestionError([f"source not found: {source}"])
+
+    if path.is_file():
+        if path.suffix.lower() == ".json":
+            data = dataset_module.load_dataset(path)
+            return normalize_dataset(data)
+
+        from .extractor import extract_bytes
+
+        with open(path, "rb") as handle:
+            raw = handle.read()
+        text, meta = extract_bytes(raw, filename=path.name)
+        doc = {
+            "id": path.name,
+            "title": meta.get("title") or path.name,
+            "content": text,
+            "location": str(path),
+            "format": meta.get("format"),
+            "clearance": schema.CLEARANCE_DEFAULT,
+        }
+        return normalize_dataset({"documents": [doc]})
+
+    combined_sections: dict[str, list[dict[str, Any]]] = {}
+    combined_relationships: dict[str, list[dict[str, Any]]] = {}
+    metadata: dict[str, Any] = {}
+
+    for root, _, names in os.walk(path):
+        for name in sorted(names):
+            if _is_ignored(name):
+                continue
+            file_path = Path(root) / name
+            rel_key = str(file_path.relative_to(path)).replace("\\", "/")
+
+            if file_path.suffix.lower() == ".json":
+                try:
+                    data = dataset_module.load_dataset(file_path)
+                    normalized = normalize_dataset(data)
+                    if normalized.get("metadata") and not metadata:
+                        metadata = normalized["metadata"]
+                    for sec, recs in normalized["sections"].items():
+                        combined_sections.setdefault(sec, []).extend(recs)
+                    for rel, entries in normalized["relationships"].items():
+                        combined_relationships.setdefault(rel, []).extend(entries)
+                    continue
+                except Exception:
+                    pass
+
+            try:
+                from .extractor import extract_bytes
+
+                with open(file_path, "rb") as handle:
+                    raw = handle.read()
+                text, meta = extract_bytes(raw, filename=name)
+                doc = {
+                    "id": rel_key,
+                    "title": meta.get("title") or name,
+                    "content": text,
+                    "location": rel_key,
+                    "format": meta.get("format"),
+                    "clearance": schema.CLEARANCE_DEFAULT,
+                }
+                combined_sections.setdefault("documents", []).append(doc)
+            except Exception:
+                continue
+
+    return {
+        "metadata": metadata,
+        "sections": combined_sections,
+        "relationships": combined_relationships,
+    }
+
+
+def ingest_source(
+    source: Union[str, Path],
+    *,
+    writer: IngestWriter,
+    reader: GraphClient,
+    touch: bool = False,
+    validate: bool = False,
+    **validate_flags: Any,
+) -> IngestReport:
+    """Ingest a file or folder of source files (JSON, PDF, DOCX, XML, MD, text)."""
+    dataset = load_source_path(source)
+    return ingest(
+        dataset,
+        writer=writer,
+        reader=reader,
+        touch=touch,
+        validate=validate,
+        **validate_flags,
+    )
+
+
 __all__ = [
     "IngestionError",
     "PlannedNode",
@@ -625,4 +792,11 @@ __all__ = [
     "write_meta",
     "ingest",
     "ingest_file",
+    "ingest_source",
+    "load_source_path",
+    "normalize_dataset",
+    "sha256_file",
+    "load_manifest",
+    "save_manifest",
 ]
+
