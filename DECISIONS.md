@@ -822,3 +822,40 @@ for the baseline -- exactly the gap the demo shows. It reads only documents.
 `check.sh`. The offline fact check needs neither, so `check.sh` gained step 10
 (`scripts/run_eval.py --offline`) to enforce the step 14 done-when on every
 change. Scores are printed, never written to disk.
+
+## D15.1 — Submission artifacts and self-audit
+
+**What we changed:** `scripts/gen_queries_md.py` gained `--check` so a stale
+`queries.md` is caught by `check.sh` step 9. `check.sh` was updated to use that
+drift check. `scripts/serve.sh` added to serve the API via uvicorn using the
+same runtime factory as tests; `scripts/up.sh` now ingests the synthetic dataset
+and can serve the API (by default) so that a fresh checkout reaches a working
+`/ask`. `scripts/demo.sh` + `scripts/demo.py` written to run the six demo
+scenarios end to end against a live server. `scripts/check_config_paths.py`
+now validates the new serve/demo scripts. `src/noodle/server.py` added as the
+ASGI entry point (`create_server` builds the runtime from config).
+
+**Why:** Step 15 requires "Fresh checkout goes from scripts/up.sh to a working
+`/ask`" and all submission artifacts present. The drift check ensures
+`queries.md` cannot diverge from the query library. Local serving is needed to
+reach `/ask` from `up.sh`.
+
+**Trade-offs:** `up.sh` serves by default. That matches the done-when and is easy
+for a fresh checkout, though it blocks in the foreground (there is `--no-serve`).
+Adding `server.py` is a thin wrapper and does not change any security boundary
+(the runtime and API are unchanged). The demo script references dataset ids to
+target the shipped synthetic data, but those names live in data/tests/golden,
+not in `src/` or config, so `check_no_company_names` does not fire.
+
+**Verification:** `check.sh` PASS (all 10 checks). `scripts/gen_queries_md.py --check`
+passes. Offline eval passes (50/50). Unit suite: 346 passed.
+
+**Self-audit (builder-side) against checklist (10):** I1-I6 satisfied (FalkorDB
+central; README, queries.md, EXPLAIN.md, AI_DISCLOSURE.md, DEMO.md present;
+accurate AI disclosure with trailers for AI-assisted commits; EXPLAIN explains
+each query and every component; synthetic-only data; all artifacts current).
+A1-A3 satisfied (queries.py is the only Cypher source, no in-memory cache, graph
+outage returns 503 as verified by tests). The instruction forbids approving one's
+own code in the same session that wrote it; this is recorded as a builder
+self-audit and should be reviewed by an independent reviewer.
+

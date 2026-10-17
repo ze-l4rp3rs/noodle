@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 # Bring Noodle up locally: load secrets safely, check the toolchain and config,
-# start FalkorDB and wait on its health check (no fixed sleeps), then run the
-# idempotent ensure_schema().
+# start FalkorDB and wait on its health check (no fixed sleeps), run the
+# idempotent ensure_schema(), ingest the synthetic dataset, then serve the API so
+# a fresh checkout reaches a working /ask (08 step 15).
+#
+#   scripts/up.sh              # bring everything up and serve in the foreground
+#   scripts/up.sh --no-serve   # set up only (graph + schema + dataset loaded)
 set -euo pipefail
+
+SERVE=1
+for arg in "$@"; do
+  case "$arg" in
+    --no-serve) SERVE=0 ;;
+    -h|--help) printf 'usage: scripts/up.sh [--no-serve]\n'; exit 0 ;;
+    *) printf '[up] ERROR: unknown argument %s\n' "$arg" >&2; exit 1 ;;
+  esac
+done
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
@@ -79,7 +92,7 @@ for var in ANTHROPIC_API_KEY GOOGLE_API_KEY OPENAI_API_KEY GROQ_API_KEY; do
   if [[ -n "${!var:-}" ]]; then found_provider=1; fi
 done
 if [[ "$found_provider" -eq 0 ]]; then
-  log "WARNING: no provider key found in the environment (providers arrive at step 6)"
+  log "WARNING: no provider key found; /ask needs one (see .env.example)"
 fi
 
 # --- FalkorDB ----------------------------------------------------------------
@@ -101,9 +114,32 @@ status="$(docker inspect --format '{{.State.Health.Status}}' noodle-falkordb 2>/
 # --- schema ------------------------------------------------------------------
 "$PYTHON" -m noodle.bootstrap
 
+# --- dataset -----------------------------------------------------------------
+DATA="$ROOT/data/synthetic/dataset.json"
+if [[ -f "$DATA" ]]; then
+  log "ingesting $DATA"
+  "$PYTHON" "$ROOT/scripts/ingest.py" "$DATA"
+else
+  log "WARNING: no dataset at data/synthetic/dataset.json; /ask will find nothing"
+fi
+
+if [[ "$SERVE" -eq 0 ]]; then
+  cat <<'NEXT'
+
+[up] Setup complete (graph + schema + dataset). Start the API with:
+  scripts/serve.sh
+NEXT
+  exit 0
+fi
+
 cat <<'NEXT'
 
-[up] Next steps:
+[up] Next steps in another terminal:
   - Run the checks:        scripts/check.sh
-  - Dataset loading and ingestion arrive at step 3.
+  - Run the demo:          scripts/demo.sh
+  - Stop the graph:        scripts/db.sh down
+
+[up] Serving the API now (Ctrl-C to stop)...
 NEXT
+
+exec "$ROOT/scripts/serve.sh"

@@ -109,10 +109,11 @@ if "$PYTHON" "$ROOT/scripts/check_tracked_files.py"; then pass "no tracked secre
 
 echo "== 9. queries.md up to date =="
 if [[ -f "$ROOT/src/noodle/queries.py" ]]; then
-  if [[ -f "$ROOT/queries.md" ]]; then
-    pass "queries.md present (regeneration checked at step 15)"
+  if "$PYTHON" "$ROOT/scripts/gen_queries_md.py" --check >/dev/null 2>&1; then
+    pass "queries.md matches the query library"
   else
-    fail "queries.md missing"
+    "$PYTHON" "$ROOT/scripts/gen_queries_md.py" --check
+    fail "queries.md is stale (run scripts/gen_queries_md.py)"
   fi
 else
   skip "queries.py arrives at step 4"

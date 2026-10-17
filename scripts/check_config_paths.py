@@ -53,7 +53,7 @@ def main() -> int:
             if not fb.get("image"):
                 problems.append("falkordb service has no image")
 
-    for script in ("scripts/up.sh", "scripts/check.sh", ".env.example"):
+    for script in ("scripts/up.sh", "scripts/serve.sh", "scripts/demo.sh", "scripts/check.sh", ".env.example"):
         if not (ROOT / script).exists():
             problems.append(f"missing {script}")
 
