@@ -23,7 +23,7 @@ No company, person or record name appears in this module.
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
 from .config import DEFAULT_FIX_ROUNDS
@@ -31,7 +31,7 @@ from .graph import GraphClient
 from .loop import DEFAULT_MAX_TOOL_ROUNDS, ToolCallRecord, ToolSet, redacted_query, run_tool_loop
 from .prompts import FIX_INSTRUCTION, GENERATOR_INSTRUCTION
 from .providers import Completion, Message, Provider
-from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden, q12_freshness
+from .queries import HiddenInfo, QueryResult, UserCtx, merge_hidden, q12_freshness, q14_person
 from .reviewer import Review, review, reviewer_problems
 from .sources import SourceRegistry
 from .tools import TOOLS, Evidence
@@ -86,6 +86,7 @@ class AnswerRun:
     elapsed_ms: float
     live_intent: bool = False
     as_of: str = ""
+    access_owner_names: dict[str, str] = field(default_factory=dict)
 
 
 def build_fix_request(
@@ -342,7 +343,27 @@ def run_answer(
         elapsed_ms=(time.perf_counter() - started) * 1000,
         live_intent=live_intent,
         as_of=as_of,
+        access_owner_names=_access_owner_names(client, hidden),
     )
+
+
+def _access_owner_names(client: GraphClient, hidden: HiddenInfo) -> dict[str, str]:
+    """Resolve each access owner id to a display name for the fixed notice (06).
+
+    The notice names the person who can grant access; an owner we cannot resolve
+    is left out, and the response falls back to the fixed "your administrator"
+    text. A lookup failure never changes the answer.
+    """
+
+    names: dict[str, str] = {}
+    for owner in hidden.access_owners:
+        try:
+            rows = q14_person(client, owner).rows
+        except Exception:  # noqa: BLE001 - a failed name lookup is not fatal
+            continue
+        if rows and rows[0].get("name"):
+            names[owner] = str(rows[0]["name"])
+    return names
 
 
 __all__ = ["Draft", "AnswerRun", "build_fix_request", "run_answer"]

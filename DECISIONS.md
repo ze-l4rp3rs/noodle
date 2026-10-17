@@ -591,3 +591,78 @@ the sync date itself.
 in `router.py` keeps the unit tests exhaustive without a config fixture, and the
 group has no other consumer yet; moving them to config is cheap later and can
 ride with the config work that adds the classifier (D10.1).
+
+## Step 11 - Soft dead-end end to end
+
+### D11.1 Identity is the bearer token, with a dev-only header as a convenience
+
+07 wants `Authorization: Bearer <token>` mapped to a Person, plus a way to switch
+users while developing. `noodle.auth.claim_from_headers` reads the dev
+`X-Noodle-User` header in development, and otherwise a bearer token. There is no
+real identity provider in the submission, so the token is mapped through the
+`NOODLE_AUTH_TOKENS` environment variable (a JSON `{token: person-id}`); in
+development an unmapped token is taken as the person id itself, so a demo user is
+one header away, while in production an unmapped token is refused (anonymous).
+The header is ignored entirely when `NOODLE_ENV=prod` (E7): the flag is read from
+the runtime settings, not the request, so it cannot be spoofed.
+
+### D11.2 Clearance always comes from the graph, and resolution can only lower it
+
+`auth.resolve_user` looks the claimed person up with the new allow-listed
+`q14_person` and takes their clearance and team from the node. An empty claim or
+an unknown person is clearance 0 (06). When the graph is down the lookup is
+skipped, and a failed lookup (a `GraphError`) also degrades to clearance 0 — the
+lookup can never *raise* a caller's access, only leave it at the floor. The body
+never carries identity and the model never supplies it (A6): a `clearance` or
+`user_id` field in the request body is ignored because the handler never reads it.
+
+### D11.3 Q14 is allow-listed; the soft-dead-end contact needs a name
+
+The identity lookup and the dev directory cannot filter by the caller's clearance
+(resolving the caller's *own* clearance must not depend on it), so `q14_person`
+and `q14_people` are added to `check_clearance`'s allow-list alongside
+`q12_freshness`. They return directory fields only (id, name, role, clearance,
+team), never record content. To satisfy 06's "contact {owner_name}", the pipeline
+resolves each access owner's display name via `q14_person` and stores the mapping
+on `AnswerRun.access_owner_names`; `response._access_notices` uses it with the
+fixed "your administrator" fallback. `contact` stays the raw person id (07's
+example), so a UI has a stable handle even when the name is unavailable.
+
+### D11.4 The soft-dead-end notice is appended to the answer by the system
+
+05 section 5 and 06 both say the *system*, not the model, appends the fixed
+notice. `build_response` now appends the notice text to `answer` (before the
+as-of line) as well as exposing it in `access_notices`, so the two can never
+disagree and the model cannot omit or reword it. The notice carries no title,
+id, type or count — only the contact — so appending it leaks nothing.
+
+### D11.5 The hidden-check was already wired; step 11 proves it end to end
+
+`verification.check_draft` raising `HiddenDataError` for a forbidden ref, and the
+pipeline threading `forbidden_refs`, both landed with the earlier verification
+work; step 11 does not change them. In production `forbidden_refs` is empty — the
+query layer already never returns hidden ids, so the check is a test-injectable
+safety net rather than the primary defence. The red-team suite (`test_redteam.py`)
+searches the response and the run log for every hidden id, title and distinctive
+string, which is what C8 actually asks for.
+
+### D11.6 The red-team tests pin `fix_rounds` and call the pipeline directly
+
+Each of the twelve prompts in 06 runs through `run_answer(..., fix_rounds=0)`
+with scripted providers and the recording client, then `build_response`, so the
+scenarios are one draft each and fully deterministic. This is deliberate: the
+done-when is the *containment* guarantee, not the fix loop (which step 8 tests).
+Because the recording client matches a statement by a Cypher substring and
+consumes each response once, `_matches` now also accepts a callable `(cypher,
+params)` (falling back to `(cypher)`), so a test can answer the same Q14 lookup
+differently per person id — needed to resolve two different owners.
+
+### D11.7 RT12 is the intern/VP golden pair
+
+`test_rt12_intern_and_vp_differ_as_specified` runs the same question for a
+clearance-1 caller and a clearance-3 caller with different prepared rows. The
+intern is dead-ended (notice present, no hidden strings anywhere), the VP gets the
+full answer (no notice, the restricted title present), and the two `graph_trace`
+`node_ids` sets differ — the intern's visible graph never contains the VP-only
+node. This is the step's primary done-when.
+

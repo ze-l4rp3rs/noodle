@@ -1,9 +1,9 @@
 """The HTTP API: ``/health`` and ``/ask`` over the shared answer service (07).
 
-Only these two endpoints belong to this step. ``/copilot/*`` arrives with step
-12, ``/ingest`` with step 13, and the full auth middleware and ``/users`` with
-step 11; until then the dev ``X-Noodle-User`` header maps to a Person and
-anonymous requests leak nothing.
+``/copilot/*`` arrives with step 12 and ``/ingest`` with step 13. The caller is
+resolved by :mod:`noodle.auth`: a bearer token (or, in development only, the
+``X-Noodle-User`` header) is mapped to a Person and their clearance is read from
+the graph (step 11). ``GET /users`` is the dev-only switcher (07).
 
 Two rules from 07 drive the shape: ``/ask`` never blocks waiting for input, and a
 graph outage is always ``503`` -- never a cached or model-only answer.
@@ -15,9 +15,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.concurrency import run_in_threadpool
 
-from . import __version__
+from . import __version__, auth
 from .graph import GraphError
-from .queries import UserCtx
+from .queries import UserCtx, q14_people
 from .response import stream_events
 from .service import GraphDownError, Runtime, answer
 
@@ -27,18 +27,9 @@ def _wants_stream(request: Request) -> bool:
 
 
 def _resolve_user(request: Request, runtime: Runtime) -> UserCtx:
-    """The caller for this request. Full auth is step 11.
+    """The caller for this request (07, step 11)."""
 
-    Outside production the dev ``X-Noodle-User`` header names the Person (07); an
-    absent header is anonymous, which is clearance 0 and leaks nothing.
-    """
-
-    if runtime.settings.is_prod:
-        return UserCtx.anonymous()
-    raw = request.headers.get("x-noodle-user")
-    if not raw:
-        return UserCtx.anonymous()
-    return UserCtx(id=raw.strip())
+    return auth.user_for_request(request, runtime)
 
 
 def _graph_down() -> JSONResponse:
@@ -60,6 +51,31 @@ def create_app(runtime: Runtime) -> FastAPI:
         if runtime.graph_up():
             return JSONResponse(status_code=200, content={"status": "ok", "graph": "up"})
         return _graph_down()
+
+    @app.get("/users")
+    def users() -> JSONResponse:
+        """The dev user switcher (07): demo users of every clearance.
+
+        Off in production -- a production caller gets a 404, never the directory.
+        """
+
+        if runtime.settings.is_prod:
+            return JSONResponse(status_code=404, content={"error": "not found"})
+        result = q14_people(runtime.client)
+        return JSONResponse(
+            status_code=200,
+            content={
+                "users": [
+                    {
+                        "id": row.get("id"),
+                        "name": row.get("name"),
+                        "role": row.get("role"),
+                        "clearance": row.get("clearance"),
+                    }
+                    for row in result.rows
+                ]
+            },
+        )
 
     @app.post("/ask")
     async def ask(request: Request) -> JSONResponse:

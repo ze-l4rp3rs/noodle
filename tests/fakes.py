@@ -95,11 +95,25 @@ class RecordingGraphClient:
 
         return self.up
 
+    @staticmethod
+    def _matches(matcher: Any, cypher: str, params: dict) -> bool:
+        """A matcher is a substring or a callable ``(cypher, params) -> bool``.
+
+        Callables may take one argument (``cypher``) or two (``cypher``,
+        ``params``), so a test can answer the same statement differently per id.
+        """
+
+        if callable(matcher):
+            try:
+                return bool(matcher(cypher, params))
+            except TypeError:
+                return bool(matcher(cypher))
+        return matcher in cypher
+
     def ro_query(self, cypher: str, params: Optional[dict] = None, timeout: Any = None) -> GraphResult:
         self.calls.append((cypher, dict(params or {})))
         for index, (matcher, result) in enumerate(self._pending):
-            hit = matcher(cypher) if callable(matcher) else (matcher in cypher)
-            if not hit:
+            if not self._matches(matcher, cypher, dict(params or {})):
                 continue
             self._pending.pop(index)
             if isinstance(result, Exception):

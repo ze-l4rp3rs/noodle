@@ -601,6 +601,48 @@ def q12_freshness(client: GraphClient, user: UserCtx) -> QueryResult:
 
 
 # --------------------------------------------------------------------------- #
+# Q14 identity and directory (allow-listed: no clearance filter by design)
+# --------------------------------------------------------------------------- #
+
+
+def q14_person(client: GraphClient, person_id: str) -> QueryResult:
+    """One Person's directory fields by id: name, role, clearance, team.
+
+    Allow-listed (no ``$clr``): it resolves an already-authenticated caller's own
+    clearance (06) and an access owner's display name for the fixed notice. It
+    returns directory fields only, never record content.
+    """
+
+    cypher = (
+        "MATCH (p:" + schema.LABEL_PERSON + " {id: $id}) "
+        "RETURN p.id AS id, p.name AS name, p.role AS role, "
+        "p.clearance AS clearance, p.team AS team"
+    )
+    params: dict[str, Any] = {"id": person_id}
+    res = client.ro_query(cypher, params)
+    return _result(res, params, HiddenInfo())
+
+
+def q14_people(client: GraphClient) -> QueryResult:
+    """Every Person's directory fields, for the dev user switcher (07).
+
+    Allow-listed (no ``$clr``): the switcher must offer demo users of every
+    clearance, so it cannot filter by the caller's. The endpoint is dev-only and
+    off in production (07); only directory fields are returned, never record
+    content.
+    """
+
+    cypher = (
+        "MATCH (p:" + schema.LABEL_PERSON + ") "
+        "RETURN p.id AS id, p.name AS name, p.role AS role, p.clearance AS clearance "
+        "ORDER BY p.clearance, p.name"
+    )
+    params: dict[str, Any] = {}
+    res = client.ro_query(cypher, params)
+    return _result(res, params, HiddenInfo())
+
+
+# --------------------------------------------------------------------------- #
 # Q13 hidden twins -- only count and access owners, never content (06)
 # --------------------------------------------------------------------------- #
 
@@ -758,6 +800,8 @@ __all__ = [
     "q10_team_impact",
     "q11_blast_radius",
     "q12_freshness",
+    "q14_person",
+    "q14_people",
     "hidden_twin_search",
     "hidden_twin_entity",
     "hidden_twin_sources",

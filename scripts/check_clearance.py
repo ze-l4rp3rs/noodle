@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 QUERIES = ROOT / "src" / "noodle" / "queries.py"
-ALLOWLISTED_FUNCTIONS = {"q12_freshness", "ensure_schema"}
+ALLOWLISTED_FUNCTIONS = {"q12_freshness", "q14_person", "q14_people", "ensure_schema"}
 # Q13 hidden twins deliberately invert the predicate (``clearance > $clr``) and
 # return only counts and access owners, so they are allow-listed by name.
 ALLOWLISTED_PREFIXES = ("hidden_",)

@@ -43,6 +43,8 @@ USER = Q.UserCtx("person:test-user", clearance=1)
 QUESTION = "who owns project y?"
 Q2 = "MATCH (p:Person)-[r]-(x {id: $id})"
 TWIN = "WITH CASE WHEN x.clearance > $clr"
+PERSON_LOOKUP = "p.clearance AS clearance, p.team AS team"
+USER_ROW = {"id": "person:test-user", "name": "Test User", "role": "Engineer", "clearance": 1, "team": None}
 SOURCE_TEXT = "Omar is the owner of project:y"
 OWNER_ROW = {"person_id": "person:x", "name": "Omar", "rel": "OWNS", "entity": "project:y"}
 
@@ -98,6 +100,7 @@ def runtime() -> Runtime:
         provider=ScriptedProvider([tool(), misquoting()]),
         reviewer_provider=ScriptedProvider([approving()]),
         client=RecordingGraphClient(
+            (PERSON_LOOKUP, graph_result([dict(USER_ROW)])),
             (Q2, graph_result([dict(OWNER_ROW)])),
             (TWIN, hidden_result(0, [])),
         ),

@@ -44,14 +44,15 @@ FRESHNESS_CYPHER_MARKER = "meta:sync"
 def _access_notices(run: AnswerRun) -> list[dict[str, str]]:
     """The fixed soft dead-end notice (06), appended by the system, not the model.
 
-    ``contact`` is the access owner's person id, the stable handle step 11 later
-    resolves to a display name; it is never a hidden node's title, id or type.
+    The text names the person who can grant access (resolved to a display name by
+    the pipeline) or the fixed fallback; ``contact`` stays the access owner's
+    person id. Neither field ever carries a hidden node's title, id or type.
     """
 
     if not run.hidden.hidden:
         return []
     owner = run.hidden.access_owners[0] if run.hidden.access_owners else ""
-    contact = owner or ACCESS_FALLBACK_CONTACT
+    contact = run.access_owner_names.get(owner, "") or ACCESS_FALLBACK_CONTACT
     return [{"text": ACCESS_NOTICE_TEXT.format(contact=contact), "contact": owner}]
 
 
@@ -121,7 +122,12 @@ def build_response(
     """
 
     as_of = run.as_of or _as_of(run)
+    notices = _access_notices(run)
     answer = run.answer
+    # Fixed system notices (05 section 5): the soft dead-end text, then the as-of
+    # line. The model never writes either.
+    for notice in notices:
+        answer = f"{answer}\n\n{notice['text']}"
     if run.live_intent and as_of:
         answer = f"{answer}\n\n{AS_OF_TEXT.format(as_of=as_of)}"
 
@@ -133,7 +139,7 @@ def build_response(
         "missing": list(run.missing),
         "premise": list(run.premise),
         "proposed_actions": _proposed_actions(run),
-        "access_notices": _access_notices(run),
+        "access_notices": notices,
         "freshness": {"as_of": as_of, "live_intent": bool(run.live_intent)},
         "graph_trace": _graph_trace(run),
         "metadata": {

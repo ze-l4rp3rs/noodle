@@ -29,8 +29,31 @@ USER = Q.UserCtx("person:test-user", clearance=1)
 QUESTION = "who owns project y?"
 Q2 = "MATCH (p:Person)-[r]-(x {id: $id})"
 TWIN = "WITH CASE WHEN x.clearance > $clr"
+PERSON_LOOKUP = "p.clearance AS clearance, p.team AS team"
 
 OWNER_ROW = {"person_id": "person:x", "name": "Omar", "rel": "OWNS", "entity": "project:y"}
+
+
+def person_matcher(person_id: str, row: dict):
+    """Answer the step-11 identity lookup for one person id (07)."""
+
+    return lambda cypher, params: PERSON_LOOKUP in cypher and params.get("id") == person_id, graph_result([row])
+
+
+USER_ROW = {
+    "id": "person:test-user",
+    "name": "Test User",
+    "role": "Engineer",
+    "clearance": 1,
+    "team": None,
+}
+OWNER_CONTACT_ROW = {
+    "id": "person:k",
+    "name": "Kim Access",
+    "role": "VP",
+    "clearance": 3,
+    "team": None,
+}
 
 
 class SeededRng:
@@ -97,6 +120,8 @@ def runtime_for(generator_replies, reviewer_replies, *, up: bool = True, hidden=
     generator = ScriptedProvider(generator_replies)
     reviewer = ScriptedProvider(reviewer_replies)
     client = RecordingGraphClient(
+        person_matcher("person:test-user", dict(USER_ROW)),
+        person_matcher("person:k", dict(OWNER_CONTACT_ROW)),
         (Q2, graph_result([dict(OWNER_ROW)])),
         (TWIN, hidden if hidden is not None else hidden_result(0, [])),
         up=up,
@@ -277,8 +302,10 @@ def test_access_notice_is_system_text_with_a_contact():
     assert len(notices) == 1
     assert notices[0]["contact"] == "person:k"
     assert notices[0]["text"] == (
-        "There is relevant material above your access level. To request access, contact person:k."
+        "There is relevant material above your access level. To request access, contact Kim Access."
     )
+    # the fixed notice is system text, appended to the answer, not written by the model
+    assert notices[0]["text"] in response["answer"]
 
 
 def test_no_access_notice_when_nothing_is_hidden():
