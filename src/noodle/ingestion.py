@@ -23,7 +23,7 @@ from typing import Any, Iterable, Mapping, Optional, Sequence, Union
 
 from . import dataset as dataset_module
 from . import schema
-from .graph import GraphClient, GraphError, IngestWriter
+from .graph import GraphClient, GraphError, IngestWriter, open_writer
 
 BATCH_SIZE = 200
 META_ID = "meta:sync"
@@ -46,6 +46,10 @@ META_CYPHER = (
     "SET m.last_synced_at = $last_synced_at, m.dataset_version = $version, "
     "m.record_counts = $counts"
 )
+NODE_DELETE_CYPHER = "MATCH (n:{label} {{id: $id}}) DELETE n"
+REL_DELETE_CYPHER = "MATCH (a)-[r:{type}]->(b) WHERE a.id = $src AND b.id = $dst DELETE r"
+FLAG_WRITE_CYPHER = "MATCH (n:{label} {{id: $id}}) SET n.current = $current"
+CLEAR_CYPHER = "MATCH (n) DETACH DELETE n"
 
 # Keys that are authoring commentary, never part of a record's identity (02).
 _AUTHORING_KEYS = frozenset({"notes", "authoring_notes"})
@@ -171,17 +175,24 @@ def normalize_dataset(dataset: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) -> Plan:
+def build_plan(
+    dataset: Mapping[str, Any],
+    *,
+    written_at: Optional[str] = None,
+    known_ids: Optional[Mapping[str, str]] = None,
+) -> Plan:
     """Turn a dataset into nodes and relationships, validating as it goes.
 
     Unknown relationship lists are reported in ``notes`` and skipped (04). Every
     endpoint must exist with the label the relationship type expects, or the run
-    fails naming the entry.
+    fails naming the entry. ``known_ids`` maps ids already in the graph to their
+    section, so a partial live update may reference records it does not restate.
     """
 
     written_at = written_at or _now_iso()
     dataset = normalize_dataset(dataset)
     sections: Mapping[str, Any] = dataset["sections"]
+    known_sections: dict[str, str] = dict(known_ids or {})
 
     node_section: dict[str, str] = {}
     nodes: list[PlannedNode] = []
@@ -311,8 +322,8 @@ def build_plan(dataset: Mapping[str, Any], *, written_at: Optional[str] = None) 
     planned_rels: list[PlannedRelationship] = []
     for (rel_type, src, dst), props in rels.items():
         rel_def = schema.RELATIONSHIP_BY_TYPE[rel_type]
-        src_section = node_section.get(src)
-        dst_section = node_section.get(dst)
+        src_section = node_section.get(src) or known_sections.get(src)
+        dst_section = node_section.get(dst) or known_sections.get(dst)
         if src_section is None:
             problems.append(f"{rel_type}({src} -> {dst}): source {src!r} does not exist")
             continue
@@ -409,6 +420,7 @@ def _apply_current_flags(
 class NodeState:
     fingerprint: Optional[str]
     current: Optional[bool]
+    label: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -458,7 +470,9 @@ def read_node_state(
             raise
         for row in result.rows:
             state[row["id"]] = NodeState(
-                fingerprint=row.get("fingerprint"), current=row.get("current")
+                fingerprint=row.get("fingerprint"),
+                current=row.get("current"),
+                label=label,
             )
     return state
 
@@ -475,6 +489,22 @@ def read_relationships(reader: GraphClient) -> set[tuple[str, str, str]]:
         for row in result.rows
         if row.get("origin") is not None
     }
+
+
+def read_relationship_origins(reader: GraphClient) -> dict[tuple[str, str, str], str]:
+    """Id -> origin for every relationship the graph holds (origin not null)."""
+
+    try:
+        result = reader.ro_query(REL_READ_CYPHER)
+    except GraphError as exc:
+        if "empty key" in str(exc).lower():
+            return {}
+        raise
+    origins: dict[tuple[str, str, str], str] = {}
+    for row in result.rows:
+        if row.get("origin") is not None:
+            origins[(row["type"], row["src"], row["dst"])] = row["origin"]
+    return origins
 
 
 def _run_batch(writer: IngestWriter, cypher: str, batch: list[dict], describe: str) -> None:
@@ -534,6 +564,34 @@ def write_meta(
     )
 
 
+def delete_nodes(writer: IngestWriter, by_label: Mapping[str, Sequence[str]]) -> int:
+    removed = 0
+    for label, ids in by_label.items():
+        cypher = NODE_DELETE_CYPHER.format(label=label)
+        for node_id in ids:
+            writer.write_query(cypher, {"id": node_id})
+            removed += 1
+    return removed
+
+
+def delete_relationships(
+    writer: IngestWriter, rels: Sequence[tuple[str, str, str]]
+) -> int:
+    removed = 0
+    for rel_type, src, dst in rels:
+        writer.write_query(
+            REL_DELETE_CYPHER.format(type=rel_type), {"src": src, "dst": dst}
+        )
+        removed += 1
+    return removed
+
+
+def write_flag(writer: IngestWriter, label: str, node_id: str, current: bool) -> None:
+    writer.write_query(
+        FLAG_WRITE_CYPHER.format(label=label), {"id": node_id, "current": current}
+    )
+
+
 def _dataset_sync_time(dataset: Mapping[str, Any]) -> Optional[str]:
     value = (dataset.get("metadata") or {}).get("last_synced_at")
     return value if isinstance(value, str) and value else None
@@ -552,34 +610,79 @@ def ingest(
     touch: bool = False,
     written_at: Optional[str] = None,
     validate: bool = True,
+    partial: bool = False,
+    prune: bool = False,
+    rebuild: bool = False,
+    confirm_rebuild: bool = False,
     **validate_flags: Any,
 ) -> IngestReport:
     """Diff a dataset against the graph and write only what changed (04).
 
-    The sync time written to ``meta:sync`` comes from the dataset
-    (``metadata.last_synced_at``) so the demo snapshot is reproducible; it falls
-    back to the clock for a dataset that carries no sync time.
+    Incremental by default: added and changed records are written, a relationship
+    whose origin record is restated without implying it is removed (the old owner
+    after a reassignment), stale Change records go, and only records whose
+    ``current`` flag flips are rewritten.
+
+    ``partial`` marks a live update: metadata/count/trap checks are relaxed
+    (unless overridden) and references may point at records already in the graph;
+    nothing outside the update is removed. ``prune`` also removes dataset records
+    missing from the input (documents are never pruned). ``rebuild`` empties the
+    graph and reloads; it requires ``confirm_rebuild``. The sync time written to
+    ``meta:sync`` comes from the dataset (``metadata.last_synced_at``) so the demo
+    snapshot is reproducible; it falls back to the clock for a dataset that
+    carries no sync time.
     """
 
-    if validate:
-        dataset_module.validate_dataset(dataset, **validate_flags)
+    if rebuild and not confirm_rebuild:
+        raise IngestionError(["a full rebuild requires confirm_rebuild"])
 
-    plan = build_plan(dataset, written_at=written_at)
-    existing = read_node_state(reader)
+    effective_rebuild = rebuild or confirm_rebuild
+
+    if effective_rebuild:
+        existing: dict[str, NodeState] = {}
+    else:
+        existing = read_node_state(reader)
+
+    label_to_section = {label: section for section, label in schema.ENTITY_LABELS.items()}
+    known_sections = {
+        node_id: label_to_section[state.label]
+        for node_id, state in existing.items()
+        if state.label in label_to_section
+    }
+    known_for_plan = known_sections if partial else {}
+
+    if validate:
+        flags = dict(validate_flags)
+        if partial:
+            flags.setdefault("require_metadata", False)
+            flags.setdefault("require_counts", False)
+            flags.setdefault("require_traps", False)
+        dataset_module.validate_dataset(dataset, known_ids=known_for_plan, **flags)
+
+    plan = build_plan(dataset, written_at=written_at, known_ids=known_for_plan)
+    input_ids = {node.id for node in plan.nodes}
+    planned_rels = {(rel.type, rel.src, rel.dst) for rel in plan.relationships}
+
+    if effective_rebuild:
+        writer.write_query(CLEAR_CYPHER)
+        existing = {}
 
     added: dict[str, int] = {}
     changed: dict[str, int] = {}
     unchanged: dict[str, int] = {}
     flags_flipped = 0
     to_write: list[PlannedNode] = []
+    written_ids: set[str] = set()
     for node in plan.nodes:
         previous = existing.get(node.id)
         if previous is None:
             added[node.section] = added.get(node.section, 0) + 1
             to_write.append(node)
+            written_ids.add(node.id)
         elif previous.fingerprint != node.props.get("fingerprint"):
             changed[node.section] = changed.get(node.section, 0) + 1
             to_write.append(node)
+            written_ids.add(node.id)
         else:
             unchanged[node.section] = unchanged.get(node.section, 0) + 1
         new_current = node.props.get("current")
@@ -590,6 +693,20 @@ def ingest(
             and bool(previous.current) != bool(new_current)
         ):
             flags_flipped += 1
+            if node.id not in written_ids:
+                to_write.append(node)
+                written_ids.add(node.id)
+
+    # A supersession may target a record this update does not restate (a partial
+    # live update): flip that existing record's flag and rewrite only it.
+    for rel in plan.relationships:
+        if rel.type not in _SUPERSEDING_TYPES or rel.dst in input_ids:
+            continue
+        previous = existing.get(rel.dst)
+        if previous is None or previous.label is None or not previous.current:
+            continue
+        write_flag(writer, previous.label, rel.dst, False)
+        flags_flipped += 1
 
     write_nodes(writer, to_write)
 
@@ -599,7 +716,31 @@ def ingest(
     ]
     write_relationships(writer, rels_to_write)
 
-    changed_any = bool(to_write) or bool(rels_to_write)
+    # ---- removal (incremental only) ------------------------------------ #
+    removed_rels: list[tuple[str, str, str]] = []
+    removed_nodes: dict[str, list[str]] = {}
+    if not partial and not effective_rebuild:
+        for key, origin in read_relationship_origins(reader).items():
+            if origin in input_ids and key not in planned_rels:
+                removed_rels.append(key)
+        for node_id, state in existing.items():
+            if node_id in input_ids or state.label is None:
+                continue
+            if state.label == schema.LABEL_CHANGE:
+                removed_nodes.setdefault(state.label, []).append(node_id)
+            elif prune and state.label not in (schema.LABEL_DOCUMENT, schema.LABEL_META):
+                removed_nodes.setdefault(state.label, []).append(node_id)
+
+    deleted_nodes = delete_nodes(writer, removed_nodes)
+    deleted_rels = delete_relationships(writer, removed_rels)
+
+    changed_any = (
+        bool(to_write)
+        or bool(rels_to_write)
+        or bool(deleted_nodes)
+        or bool(deleted_rels)
+        or flags_flipped > 0
+    )
     synced = False
     last_synced_at = _dataset_sync_time(dataset)
     if changed_any or touch:
@@ -616,9 +757,9 @@ def ingest(
         changed=changed,
         unchanged=unchanged,
         relationships_written=len(rels_to_write),
-        relationships_removed=0,
+        relationships_removed=deleted_rels,
         flags_flipped=flags_flipped,
-        records_removed=0,
+        records_removed=deleted_nodes,
         synced=synced,
         last_synced_at=last_synced_at,
         notes=plan.notes,
@@ -635,6 +776,12 @@ def ingest_file(
 ) -> IngestReport:
     dataset = dataset_module.load_dataset(path)
     return ingest(dataset, writer=writer, reader=reader, touch=touch, **validate_flags)
+
+
+def open_dataset_writer(url: str, graph_name: str, graph: Any = None) -> IngestWriter:
+    """Open the ingestion-only write path. Used by ``POST /ingest`` (04)."""
+
+    return open_writer(url, graph_name, graph=graph)
 
 
 def sha256_file(path: Union[str, Path]) -> str:
@@ -787,9 +934,11 @@ __all__ = [
     "record_fingerprint",
     "read_node_state",
     "read_relationships",
+    "read_relationship_origins",
     "write_nodes",
     "write_relationships",
     "write_meta",
+    "open_dataset_writer",
     "ingest",
     "ingest_file",
     "ingest_source",

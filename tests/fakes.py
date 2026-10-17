@@ -198,5 +198,21 @@ class FakeIngestGraph:
             self.meta = dict(params)
             self.meta_writes += 1
             return FakeResult([], [])
+        if "DETACH DELETE" in q:
+            self.nodes.clear()
+            self.rels.clear()
+            return FakeResult([], [])
+        if "DELETE r" in q and "[r:" in q:
+            rel_type = q.split("[r:", 1)[1].split("]", 1)[0]
+            self.rels.pop((rel_type, params["src"], params["dst"]), None)
+            return FakeResult([], [])
+        if "DELETE n" in q:
+            self.nodes.pop(params.get("id"), None)
+            return FakeResult([], [])
+        if "SET n.current" in q:
+            node = self.nodes.get(params.get("id"))
+            if node is not None:
+                node["current"] = params.get("current")
+            return FakeResult([], [])
         return FakeResult([], [])
 

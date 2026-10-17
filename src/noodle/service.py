@@ -51,6 +51,7 @@ class Runtime:
     rng: Optional[object] = None
     generator_model: str = ""
     reviewer_model: str = ""
+    ingest_writer: Optional[Any] = None
 
     def graph_up(self) -> bool:
         try:

@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from noodle.extractor import extract_bytes
 from noodle.ingestion import (
     load_source_path,
     normalize_dataset,

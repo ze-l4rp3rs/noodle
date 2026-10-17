@@ -715,3 +715,60 @@ fallback to "your administrator"). `pipeline` and `copilot` both use it, and
 `response.access_notices` is the single builder shared across `/ask` and
 `/copilot/context`. These are pure refactors to keep the notice text and the
 fallback behaviour consistent (06, D11.3).
+
+## Step 13 - Incremental and live updates
+
+### D13.1 Origin-based removal, Change removal and prune are incremental-only
+
+The default (complete-dataset) run now reads each relationship's `origin` and
+removes any relationship whose origin record is restated in this input but whose
+edge the new plan no longer implies (the old `OWNS` after a reassignment). It
+also removes Change records the input's history no longer contains. `prune`
+extends this to any dataset record missing from the input **except documents**
+(documents loaded from files are never pruned) and never touches `meta` or the
+Change records handled above. A `partial` run removes nothing outside the update
+(04: "removes nothing outside the update").
+
+### D13.2 Flag-only flips are rewritten; partial supersession flips the target
+
+A record whose fingerprint is unchanged but whose derived `current` flag flips is
+now rewritten, not just counted (04 step 5: "rewrite only records whose flag
+flips"). For a partial live update that adds a `SUPERSEDES`/`REVERSES`/`OVERRIDES`
+edge to a decision or document the update does not restate, ingestion reads that
+node's existing label and flips only its `current` flag (`FLAG_WRITE_CYPHER`), so
+"is it still current?" changes without a full reload. This is the step 13
+done-when: superseding a decision flips the old flag and the answer changes.
+
+### D13.3 Rebuild requires an explicit confirmation
+
+`rebuild=True` without `confirm_rebuild=True` raises `IngestionError` (04, the
+`--confirm-rebuild` rule). A confirmed rebuild clears the graph (`MATCH (n)
+DETACH DELETE n`) and writes every record as added, so it cannot silently run.
+
+### D13.4 Partial updates relax validation and resolve references against the graph
+
+`validate_dataset` gained an optional `known_ids` map (id -> section) and
+`build_plan` accepts the same, so a partial live update may reference records it
+does not restate (a new decision naming an existing approver). Only a `partial`
+run passes these ids: a complete dataset must still resolve every reference
+internally, so the dangling-reference test is unaffected. `partial` also relaxes
+the metadata/count/trap checks unless the caller overrides them.
+
+### D13.5 POST /ingest is token-protected, size-capped and validated first
+
+`POST /ingest` is off unless `INGEST_TOKEN` is set; the token is compared in
+constant time (bearer or `x-ingest-token`) and a missing or wrong token is `401`.
+The body is capped by `api.max_live_update_size_mb` (`413`), parsed and validated
+before any write (`422` on a bad dataset, naming the problems), and the graph
+outage path is `503`. It runs ingestion with `partial=True` through the same
+`ingestion.ingest` used by the CLI. The write path stays out of `api.py`: the
+endpoint calls `ingestion.open_dataset_writer`, so the write allowlist check
+(`test_only_allowlisted_modules_reference_the_write_path`) still holds. Tests
+inject a fake writer via `Runtime.ingest_writer`, so no test needs a database.
+
+### D13.6 Two teammate lint errors fixed
+
+The rebase pulled `8d5db81` ("multi-format document extraction"), which left an
+unused `Optional` import in `extractor.py` and an unused `extract_bytes` import in
+`test_source_ingestion.py`; `ruff` (check.sh step 1) failed on them. Both were
+removed.

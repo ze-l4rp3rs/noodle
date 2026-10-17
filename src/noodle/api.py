@@ -1,9 +1,11 @@
-"""The HTTP API: ``/health``, ``/ask``, the copilot surface and ``/graph/subgraph``.
+"""The HTTP API: ``/health``, ``/ask``, the copilot surface, ``/graph/subgraph``
+and ``/ingest``.
 
-``/ingest`` arrives with step 13. The caller is resolved by :mod:`noodle.auth`: a
-bearer token (or, in development only, the ``X-Noodle-User`` header) is mapped to
-a Person and their clearance is read from the graph (step 11). ``GET /users`` is
-the dev-only switcher (07).
+The caller is resolved by :mod:`noodle.auth`: a bearer token (or, in development
+only, the ``X-Noodle-User`` header) is mapped to a Person and their clearance is
+read from the graph (step 11). ``GET /users`` is the dev-only switcher (07).
+``POST /ingest`` is off unless ``INGEST_TOKEN`` is set and compares it in constant
+time (step 13, 04).
 
 Two rules from 07 drive the shape: ``/ask`` never blocks waiting for input, and a
 graph outage is always ``503`` -- never a cached or model-only answer. The copilot
@@ -13,13 +15,16 @@ endpoints share that rule: ``/copilot/context`` reads the graph directly and
 
 from __future__ import annotations
 
+import hmac
+import json
+import os
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.concurrency import run_in_threadpool
 
-from . import __version__, auth, copilot
+from . import __version__, auth, copilot, ingestion
 from .graph import GraphError
 from .queries import UserCtx, q14_people, q15_subgraph
 from .response import stream_events
@@ -38,6 +43,22 @@ def _resolve_user(request: Request, runtime: Runtime) -> UserCtx:
 
 def _graph_down() -> JSONResponse:
     return JSONResponse(status_code=503, content={"status": "down", "graph": "down"})
+
+
+def _ingest_token_ok(request: Request, configured: str) -> bool:
+    """Constant-time check of the ``/ingest`` token (04, step 13)."""
+
+    if not configured:
+        return False
+    provided = request.headers.get("authorization", "")
+    if provided.startswith("Bearer "):
+        provided = provided[7:]
+    else:
+        provided = request.headers.get("x-ingest-token", "")
+    try:
+        return hmac.compare_digest(provided.encode("utf-8"), configured.encode("utf-8"))
+    except Exception:  # noqa: BLE001 - any compare failure is "not authorised"
+        return False
 
 
 def _format_subgraph(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -216,6 +237,68 @@ def create_app(runtime: Runtime) -> FastAPI:
                 media_type="text/event-stream",
             )
         return JSONResponse(status_code=200, content=response)
+
+    @app.post("/ingest")
+    async def ingest_endpoint(request: Request) -> JSONResponse:
+        """Live partial dataset ingest (step 13). Off unless ``INGEST_TOKEN`` is set."""
+
+        if not _ingest_token_ok(request, os.environ.get("INGEST_TOKEN", "")):
+            return JSONResponse(status_code=401, content={"error": "unauthorized"})
+        if not runtime.graph_up():
+            return _graph_down()
+
+        body = await request.body()
+        max_bytes = runtime.settings.api.max_live_update_size_mb * 1024 * 1024
+        if len(body) > max_bytes:
+            return JSONResponse(status_code=413, content={"error": "payload too large"})
+        try:
+            data = json.loads(body)
+        except Exception:  # noqa: BLE001 - any unreadable body is an invalid dataset
+            return JSONResponse(
+                status_code=422,
+                content={"error": "invalid dataset", "problems": ["request body is not valid JSON"]},
+            )
+        if not isinstance(data, dict):
+            return JSONResponse(
+                status_code=422,
+                content={"error": "invalid dataset", "problems": ["body must be a JSON object"]},
+            )
+
+        writer = runtime.ingest_writer or ingestion.open_dataset_writer(
+            runtime.settings.graph.url, runtime.settings.graph.name
+        )
+        try:
+            report = await run_in_threadpool(
+                ingestion.ingest,
+                data,
+                writer=writer,
+                reader=runtime.client,
+                partial=True,
+            )
+        except (GraphError, GraphDownError):
+            return _graph_down()
+        except Exception as exc:  # noqa: BLE001 - any dataset problem is a 422
+            problems = list(getattr(exc, "problems", []) or [str(exc)])
+            return JSONResponse(
+                status_code=422,
+                content={"error": "invalid dataset", "problems": problems},
+            )
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "added": dict(report.added),
+                "changed": dict(report.changed),
+                "unchanged": dict(report.unchanged),
+                "relationships_written": report.relationships_written,
+                "relationships_removed": report.relationships_removed,
+                "flags_flipped": report.flags_flipped,
+                "records_removed": report.records_removed,
+                "synced": report.synced,
+                "last_synced_at": report.last_synced_at,
+                "notes": list(report.notes),
+            },
+        )
 
     return app
 

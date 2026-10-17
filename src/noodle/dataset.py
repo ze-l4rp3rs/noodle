@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping, Union
+from typing import Any, Mapping, Optional, Union
 
 from . import schema
 
@@ -107,15 +107,19 @@ def validate_dataset(
     require_metadata: bool = True,
     require_counts: bool = True,
     require_traps: bool = True,
+    known_ids: Optional[Mapping[str, str]] = None,
 ) -> ValidationReport:
     """Validate a dataset; raise :class:`DatasetError` listing every problem.
 
     Reference resolution is always checked. The metadata, count and trap checks
     are what the full synthetic dataset must satisfy; the hand fixture relaxes
-    them while still proving every reference resolves.
+    them while still proving every reference resolves. ``known_ids`` maps ids
+    already in the graph to their section, so a partial live update may reference
+    records it does not restate.
     """
 
     problems: list[str] = []
+    known: Mapping[str, str] = known_ids or {}
 
     sections = dataset.get("sections")
     if not isinstance(sections, Mapping):
@@ -153,16 +157,30 @@ def validate_dataset(
                 problems.append(f"{rid!r}: id belongs in section {expected!r}, found in {section!r}")
             by_id[rid] = (section, record)
 
+    def section_of(ref: Any) -> Optional[str]:
+        found = by_id.get(ref) if isinstance(ref, str) else None
+        if found is not None:
+            return found[0]
+        return known.get(ref) if isinstance(ref, str) else None
+
     def resolve(ref: Any, target_section: str, where: str) -> None:
         if not isinstance(ref, str) or not ref:
             problems.append(f"{where}: reference is not a non-empty string")
             return
         found = by_id.get(ref)
-        if found is None:
+        if found is not None:
+            if found[0] != target_section:
+                problems.append(
+                    f"{where}: reference {ref!r} is in {found[0]!r}, expected {target_section!r}"
+                )
+            return
+        known_section = known.get(ref)
+        if known_section is None:
             problems.append(f"{where}: reference {ref!r} does not resolve")
-        elif found[0] != target_section:
+        elif known_section != target_section:
             problems.append(
-                f"{where}: reference {ref!r} is in {found[0]!r}, expected {target_section!r}"
+                f"{where}: reference {ref!r} is a known {known_section!r}, "
+                f"expected {target_section!r}"
             )
 
     # ---- per-record property, clearance and reference checks ----------- #
@@ -215,7 +233,7 @@ def validate_dataset(
                         continue
                     resolve(entry.get("id"), ref.target_section, where)
                     for ev in entry.get("evidence", []) or []:
-                        if ev not in by_id:
+                        if section_of(ev) is None:
                             problems.append(f"{where}: evidence {ev!r} does not resolve")
             elif ref.many:
                 if not isinstance(value, list):
@@ -234,7 +252,7 @@ def validate_dataset(
         entity_id = record.get("entity_id")
         if not isinstance(entity_id, str) or not entity_id:
             problems.append(f"{rid}.entity_id is not a non-empty string")
-        elif entity_id not in by_id:
+        elif section_of(entity_id) is None:
             problems.append(f"{rid}.entity_id {entity_id!r} does not resolve")
         entity_type = record.get("entity_type")
         if isinstance(entity_id, str) and isinstance(entity_type, str):
@@ -270,15 +288,15 @@ def validate_dataset(
             if not isinstance(origin, str) or not origin:
                 problems.append(f"{where}: missing origin")
             for ref, allowed_sections in ((src, from_sections), (dst, to_sections)):
-                found = by_id.get(ref) if isinstance(ref, str) else None
-                if found is None:
+                found_section = section_of(ref)
+                if found_section is None:
                     problems.append(f"{where}: reference {ref!r} does not resolve")
-                elif found[0] not in allowed_sections:
+                elif found_section not in allowed_sections:
                     problems.append(
-                        f"{where}: {ref!r} is a {found[0]!r} node, not allowed for {rel_type}"
+                        f"{where}: {ref!r} is a {found_section!r} node, not allowed for {rel_type}"
                     )
             for ev in entry.get("evidence", []) or []:
-                if ev not in by_id:
+                if section_of(ev) is None:
                     problems.append(f"{where}: evidence {ev!r} does not resolve")
             relationship_count += 1
 
