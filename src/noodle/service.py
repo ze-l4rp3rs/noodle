@@ -12,7 +12,11 @@ never a cached or model-only answer (07).
 
 from __future__ import annotations
 
+import json
+import uuid
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Optional
 
 from .config import DEFAULT_FIX_ROUNDS, Settings, load_settings
@@ -109,6 +113,81 @@ def _build_question(question: str, context: Optional[str]) -> str:
     return question
 
 
+
+
+def _write_run_log(settings: Settings, response: dict[str, Any], run: AnswerRun) -> None:
+    """Persist one redacted structured log per run (05 section 7). Best effort."""
+
+    try:
+        folder = Path(settings.logs.folder)
+        folder.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+        path = folder / f"run-{stamp}-{uuid.uuid4().hex[:8]}.json"
+        payload = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "response": response,
+            "run": {
+                "status": run.status,
+                "timeout": bool(run.timeout),
+                "rounds": run.rounds,
+                "fix_rounds": run.fix_rounds,
+                "elapsed_ms": run.elapsed_ms,
+                "live_intent": run.live_intent,
+                "as_of": run.as_of,
+                "hidden": {
+                    "count": run.hidden.count,
+                    "access_owners": list(run.hidden.access_owners),
+                    "hidden": run.hidden.hidden,
+                },
+                "tool_calls": [
+                    {
+                        "tool": tc.tool,
+                        "args": tc.args,
+                        "status": tc.status,
+                        "error": tc.error,
+                        "rows": tc.rows,
+                        "sources": tc.sources,
+                        "node_ids": tc.node_ids,
+                        "edge_ids": tc.edge_ids,
+                        "duration_ms": tc.duration_ms,
+                        "reused": tc.reused,
+                        "queries": tc.queries,
+                    }
+                    for tc in run.tool_calls
+                ],
+                "traces": [
+                    {
+                        "cypher": t.cypher,
+                        "params": t.params,
+                        "node_ids": t.node_ids,
+                        "edge_ids": t.edge_ids,
+                        "rows": len(t.rows),
+                        "run_time_ms": getattr(t, "run_time_ms", 0.0),
+                    }
+                    for t in run.traces
+                ],
+                "drafts": [
+                    {
+                        "text": d.text,
+                        "score": d.score,
+                        "mechanical": [str(p) for p in d.mechanical],
+                        "reviewer": [str(p) for p in d.reviewer],
+                        "review": None if d.review is None else {
+                            "unanswered": d.review.unanswered,
+                            "false_premises": d.review.false_premises,
+                            "sentences": {k: {"supported": v.supported, "reason": v.reason} for k, v in d.review.sentences.items()},
+                        },
+                    }
+                    for d in run.drafts
+                ],
+                "messages": [{"role": m.role, "text": m.text} for m in run.messages],
+            },
+        }
+        path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    except Exception:  # noqa: BLE001 - logging must never break an answer
+        pass
+
+
 def answer(
     runtime: Runtime,
     user: UserCtx,
@@ -152,6 +231,7 @@ def answer(
         temperature=runtime.settings.generation.temperature,
         registry=registry,
         live_intent=decision.live_intent,
+        timeout_s=mode_cfg.timeout_s if mode_cfg is not None else None,
     )
     response = build_response(
         run,
@@ -159,6 +239,7 @@ def answer(
         generator_model=generator_model,
         reviewer_model=reviewer_model,
     )
+    _write_run_log(runtime.settings, response, run)
     return response, run
 
 

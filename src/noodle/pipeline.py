@@ -94,6 +94,8 @@ class AnswerRun:
     live_intent: bool = False
     as_of: str = ""
     access_owner_names: dict[str, str] = field(default_factory=dict)
+    timeout: bool = False
+    drafts: list[Draft] = field(default_factory=list)
 
 
 def build_fix_request(
@@ -190,6 +192,7 @@ def run_answer(
     quotes_required: bool = True,
     registry: Optional[SourceRegistry] = None,
     live_intent: bool = False,
+    timeout_s: Optional[float] = None,
 ) -> AnswerRun:
     """Answer ``question`` for ``user``, reviewing and fixing until clean or out of rounds."""
 
@@ -208,6 +211,7 @@ def run_answer(
     hidden = HiddenInfo()
     forced = False
     fix_rounds_used = 0
+    timed_out = False
     messages = list(conversation)
 
     # 06: a live-intent question forces the freshness guard, and the as-of time is
@@ -238,6 +242,9 @@ def run_answer(
             as_of = str(last_synced_at)
 
     for cycle in range(fix_rounds + 1):
+        if timeout_s is not None and (time.perf_counter() - started) >= float(timeout_s):
+            timed_out = True
+            break
         result = run_tool_loop(
             provider,
             client,
@@ -294,7 +301,10 @@ def run_answer(
         )
         fix_rounds_used += 1
 
-    best = min(drafts, key=lambda item: item.score)
+    if drafts:
+        best = min(drafts, key=lambda item: item.score)
+    else:
+        best = None
     verdict = verify(
         best.text,
         registry,
@@ -314,7 +324,9 @@ def run_answer(
                 missing.append(part)
         premise = list(best.review.false_premises)
 
-    if best.review is None:
+    if timed_out:
+        status = "not_checked"
+    elif best.review is None:
         status = "not_checked"
     elif verdict.status == "partly_verified" or premise or best.review.unanswered:
         status = "partly_verified"
@@ -322,7 +334,8 @@ def run_answer(
         status = "verified"
 
     approved = (
-        best.review is not None
+        (not timed_out)
+        and best.review is not None
         and not best.mechanical
         and not best.reviewer
         and not best.review.unanswered
@@ -351,6 +364,8 @@ def run_answer(
         live_intent=live_intent,
         as_of=as_of,
         access_owner_names=resolve_access_owner_names(client, hidden),
+        timeout=timed_out,
+        drafts=drafts,
     )
 
 

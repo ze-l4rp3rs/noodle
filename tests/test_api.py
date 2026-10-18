@@ -242,7 +242,7 @@ REFERENCE_KEYS = {
     "freshness_note",
     "meta",
 }
-METADATA_KEYS = {"rounds", "approved", "processingTimeMs", "mode", "generator_model", "reviewer_model"}
+METADATA_KEYS = {"rounds", "approved", "processingTimeMs", "mode", "generator_model", "reviewer_model", "timeout"}
 
 
 def test_response_matches_the_documented_shape():

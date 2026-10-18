@@ -162,6 +162,7 @@ def build_response(
             "mode": mode,
             "generator_model": generator_model or "",
             "reviewer_model": reviewer_model or "",
+            "timeout": bool(getattr(run, "timeout", False)),
         },
     }
 

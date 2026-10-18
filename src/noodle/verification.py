@@ -29,6 +29,11 @@ from typing import Iterable, Mapping, Optional
 from .sources import SourceRegistry
 
 NO_ANSWER = "I couldn't find a verifiable answer in the company records."
+
+
+def _flatten_bold(text: str) -> str:
+    """Collapse runs of three or more asterisks so no line carries nested bold (07, G4)."""
+    return re.sub(r"\*{3,}", "**", text)
 MISSING_HEADING = "Not in company records"
 
 DEFAULT_REPAIR_SIMILARITY = 0.9
@@ -621,6 +626,7 @@ def verify(
     missing = [_gap_text(sentence.text) for sentence in kept if sentence.kind == "gap"]
 
     text, references = _render(kept, registry)
+    text = _flatten_bold(text)
     if not any(sentence.kind == "fact" for sentence in kept):
         text, references = NO_ANSWER, []
 
